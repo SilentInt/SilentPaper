@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Yota Paper - one-click debug build (macOS / Linux)
+# SilentPaper - one-click debug build (macOS / Linux)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

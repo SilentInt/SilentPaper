@@ -29,4 +29,4 @@ release/
 Thumbs.db
 .DS_Store
 
-# Keep local SDK stub jars in libs/ tracked
+# The only tracked jar in libs/ is ZXing (see docs/THIRD_PARTY_NOTICES.md).

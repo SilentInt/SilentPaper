@@ -1,0 +1,28 @@
+SilentPaper
+===========
+
+A pure Android launcher derived from YotaPaper.
+
+Original project:
+  YotaPaper
+  https://github.com/SilentInt/YotaPaper
+  Copyright (C) SilentInt
+  Licensed under the GNU Affero General Public License v3.0.
+
+This derivative:
+  SilentPaper
+  Copyright (C) 2026 SilentPaper contributors
+  Licensed under the GNU Affero General Public License v3.0.
+
+Major changes from the original:
+  - Renamed the application and package to SilentPaper / com.silent.paper.
+  - Removed all Xposed integration.
+  - Removed all Root functionality (libsu, root shell, force-stop, root cleanup).
+  - Removed the Yota EPD refresh management, refresh modes and screen/page animations.
+  - Removed the control center, gesture service and notification/media reader.
+  - Removed the proprietary Yota SDK stub from the build.
+  - Added the home top style variants and the line/solid status icon styles.
+  - Reworked launcher icons and Wi-Fi transfer for Android 4.2 compatibility.
+
+The full AGPL-3.0 license text is in LICENSE.
+See docs/THIRD_PARTY_NOTICES.md for bundled third-party components.

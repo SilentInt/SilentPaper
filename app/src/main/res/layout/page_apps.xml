@@ -6,7 +6,7 @@
                 android:layout_height="match_parent"
                 android:visibility="gone">
 
-                <com.yota.launcher.ui.EInkLauncherView
+                <com.silent.paper.ui.EInkLauncherView
                     android:id="@+id/gridApps"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

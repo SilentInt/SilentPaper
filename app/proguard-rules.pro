@@ -1,9 +1,5 @@
-# Yota Launcher ProGuard rules
-
-# Keep Yota SDK API references only if any direct references are added later.
--keep class com.yotadevices.sdk.** { *; }
-
-# Xposed module entry (loaded by name from assets/xposed_init).
--keep class com.yota.launcher.xposed.MainHook { *; }
--keep class com.yota.launcher.xposed.EpdPageTurnHook { *; }
--keep class com.yota.launcher.xposed.SwipeTracker { *; }
+# SilentPaper ProGuard rules
+#
+# The launcher is plain framework code with no reflection-based entry points left
+# after the Yota/Xposed integrations were removed. The default AGP rules cover
+# activities referenced from the manifest and views referenced from XML.

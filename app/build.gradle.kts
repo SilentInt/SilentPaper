@@ -3,16 +3,16 @@ plugins {
 }
 
 android {
-    namespace = "com.yota.launcher"
+    namespace = "com.silent.paper"
     compileSdk = 36
     enableKotlin = true
 
     defaultConfig {
-        applicationId = "com.yota.launcher"
+        applicationId = "com.silent.paper"
         minSdk = 17
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.7"
+        versionCode = 1
+        versionName = "1.0"
     }
 
     signingConfigs {
@@ -51,14 +51,6 @@ android {
 }
 
 dependencies {
-    // Yota SDK is a compile-time API stub; actual implementation exists on Yota devices.
-    compileOnly(files("../libs/yotadevice_sdk-full-stub.jar"))
-
-    // Xposed API 编译期桩，只在被 Xposed 加载时使用；不打包进 APK。
-    compileOnly(files("../libs/XposedBridgeApi-stub.jar"))
-
     // QR code generation for the WiFi transfer feature.
     implementation(files("../libs/zxing-core-3.5.1.jar"))
-    // 新增 Libsu 依赖：用于维护全局长连接的 Root Shell
-    implementation("com.github.topjohnwu.libsu:core:5.2.2")
 }

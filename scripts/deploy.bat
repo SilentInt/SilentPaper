@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 rem ---------------------------------------------------------------------------
-rem Yota Paper - one-click deploy: build, install to device, grant usage access
+rem SilentPaper - one-click deploy: build, install to device, grant usage access
 rem ---------------------------------------------------------------------------
 
 set "SDK_DIR="
@@ -12,6 +12,7 @@ if "%SDK_DIR%"=="" if not "%ANDROID_SDK_ROOT%"=="" set "SDK_DIR=%ANDROID_SDK_ROO
 
 if "%SDK_DIR%"=="" if exist "%LOCALAPPDATA%\Android\Sdk" set "SDK_DIR=%LOCALAPPDATA%\Android\Sdk"
 if "%SDK_DIR%"=="" if exist "C:\Android\Sdk" set "SDK_DIR=C:\Android\Sdk"
+if "%SDK_DIR%"=="" if exist "C:\tools\android-sdk" set "SDK_DIR=C:\tools\android-sdk"
 rem Fallback: SDK kept inside the repo, next to it, or next to its parent folder.
 if "%SDK_DIR%"=="" if exist "%~dp0..\android-sdk" set "SDK_DIR=%~dp0..\android-sdk"
 if "%SDK_DIR%"=="" if exist "%~dp0..\..\android-sdk" set "SDK_DIR=%~dp0..\..\android-sdk"
@@ -41,10 +42,10 @@ if errorlevel 1 (
 )
 
 echo [INFO] Granting usage-stats permission ...
-"%ADB%" shell appops set com.yota.launcher GET_USAGE_STATS allow
+"%ADB%" shell appops set com.silent.paper GET_USAGE_STATS allow
 
-echo [INFO] Launching Yota Paper ...
-"%ADB%" shell am start -n com.yota.launcher/.LauncherActivity
+echo [INFO] Launching SilentPaper ...
+"%ADB%" shell am start -n com.silent.paper/.LauncherActivity
 
 echo [OK] Deployed.
 endlocal

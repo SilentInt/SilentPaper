@@ -17,9 +17,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
     }
 }
 
-rootProject.name = "YotaLauncher"
+rootProject.name = "SilentPaper"
 include(":app")

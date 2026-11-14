@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- 强行忽略 libsu 的 API 19 限制 -->
-    <uses-sdk tools:overrideLibrary="com.topjohnwu.superuser" />
 
-    <uses-permission android:name="com.yotadevices.permission.ACCESS_BACK_SCREEN" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <!-- A launcher enumerates every launchable app; <queries> cannot express that. -->
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -21,30 +22,13 @@
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- 保留悬浮窗权限，防止部分系统底层权限校验问题 -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
-
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:enableOnBackInvokedCallback="false"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.YotaLauncher">
-
-        <uses-library
-            android:name="com.yotadevices.sdk"
-            android:required="false" />
-
-        <meta-data
-            android:name="xposedmodule"
-            android:value="true" />
-        <meta-data
-            android:name="xposeddescription"
-            android:value="YotaPaper 桌面集成：为 EPD 参数管理中设为「动画」的 Activity 注入 Yota 横翻动画（点击左右侧触发）。" />
-        <meta-data
-            android:name="xposedminversion"
-            android:value="82" />
+        android:theme="@style/Theme.SilentPaper">
 
         <activity
             android:name=".LauncherActivity"
@@ -56,40 +40,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="com.yotadevices.intent.category.EPD_HOME" />
             </intent-filter>
-            <meta-data
-                android:name="com.yotadevices.keep_on_epd_screen"
-                android:value="true" />
         </activity>
-
-        <activity
-            android:name=".epd.EpdManagerActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-
-
-        <activity
-            android:name=".ui.ControlCenterActivity"
-            android:exported="false"
-            android:theme="@style/Theme.ControlCenter"
-            android:launchMode="singleInstance"
-            android:excludeFromRecents="true" />
-
-        <!-- 纯后台手势监听服务 -->
-        <service
-            android:name=".ControlCenterService"
-            android:exported="false" />
-
-        <!-- 通知与媒体读取服务 -->
-        <service
-            android:name=".NotificationReaderService"
-            android:exported="true"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
 
         <receiver
             android:name=".LockAdminReceiver"
