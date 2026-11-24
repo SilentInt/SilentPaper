@@ -25,13 +25,36 @@ com.silent.paper
 │   ├── RecentTasks.kt         最近任务（API 21+ 隔离实现）
 │   └── grid/GridSizing.kt     自适应行列与图标尺寸计算
 └── ui/
-    ├── EInkLauncherView.kt    网格视图（固定 ViewHolder 池，无动画）
-    ├── BatteryIconView.kt     线条 / 实心电池图标（Canvas 绘制）
-    ├── IconLoader.kt          图标加载：系统图标 / 图标包 / 线条图标
-    ├── LineIconRenderer.kt    根据原图标生成黑色线条图标
-    ├── SettingsController.kt  设置页控制器（折叠分组、弹窗列表）
-    └── StatusBarController.kt 电量 / WiFi / 蓝牙实时状态与两套顶部风格
+    ├── EInkLauncherView.kt       网格视图（固定 ViewHolder 池，无动画）
+    ├── BatteryIconView.kt        线条 / 实心电池图标（Canvas 绘制，含充电闪电）
+    ├── IconLoader.kt             图标加载：系统图标 / 图标包 / 线条图标
+    ├── LineIconRenderer.kt       根据原图标生成黑色线条图标
+    ├── SettingsController.kt     设置页控制器（折叠分组、弹窗列表、步进器）
+    ├── StatusBarController.kt    电量 / WiFi / 蓝牙实时状态与两套顶部风格
+    ├── ClockAreaController.kt    12 种时钟样式、两主页落位、对齐与字号
+    ├── TextHomeController.kt     纯文字主页列表、版式参数与标语
+    ├── WallpaperController.kt    壁纸导入、灰度 + 纸色淡化渲染
+    ├── FontController.kt         字体扫描 / SAF 选择、导入与全局应用
+    ├── InkClockViews.kt          翻页 / 圆环 / 表盘 / 点阵自绘时钟
+    ├── SevenSegmentClockView.kt  七段数码管时钟
+    └── ChipTextView.kt           壁纸上的纸色圆角底片文字
 ```
+
+### 功能控制器边界
+
+`LauncherActivity` 保留页面切换、网格装配、最近任务、WiFi 传书、锁屏等
+主流程；新增能力各自收敛到 `ui/` 下的控制器：
+
+| 控制器 | 职责 | 对外接口 |
+|---|---|---|
+| `ClockAreaController` | 12 种时钟变体、快捷行、信息行；按主页形态重挂到顶部时间槽位或 pageHome | `bind` / `apply` / `update` / `applyTypeface` |
+| `TextHomeController` | 应用名列表、页边距 / 行距 / 字号、标语、批量管理行状态 | `applyMetrics` / `populate` / `updateManageRow` |
+| `WallpaperController` | 选图、私有目录落盘、cover 裁剪 + 灰度 + 纸色混合 | `pick` / `importPicked` / `apply` / `clear` |
+| `FontController` | 字体扫描、SAF 文件夹、预览对话框、导入与视图树应用 | `showPicker` / `applyToTree` / `launcherTypeface` / `clockTypeface` |
+
+控制器通过 lambda 读取当前 `LauncherConfig`，配置写回统一走
+`LauncherActivity.onConfigChanged(config, affected)`，由 `AFFECT_*` 位掩码
+决定刷新范围。
 
 ## 主界面结构
 
@@ -90,7 +113,18 @@ homeTopStyle = 0,               // 0=经典居中, 1=左右分栏
 homeTopIconStyle = 1,           // 0=线条, 1=实心
 recentWindowMs = 30 * 60_000L,
 recentCancelBackToApp = true,
-iconPack = "", autoLineIcons = true
+iconPack = "", autoLineIcons = true,
+
+homeStyle = 0,                  // 0=图标网格, 1=纯文字
+textFontSize / textLineSpacing / textPadding / textTimeSize,
+clockStyle = 0,                 // 0..11，见 ClockAreaController
+clockTop / clockBottom / clockX, clockAlign, listAlign,
+listTop / listBottom / listLeft / listRight,
+homeSlogan / homeSloganOn / textHomeHideBars,
+clockContextSize, uiFontScale,
+appFontPath / clockFontPath / fontFolderUri / textWeight,
+wallpaperPath / wallpaperDimOn / wallpaperDim,
+drawerShowsHidden
 ```
 
 ## 兼容性设计

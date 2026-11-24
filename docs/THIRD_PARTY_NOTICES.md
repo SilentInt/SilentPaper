@@ -9,6 +9,13 @@
 | Android Gradle Plugin | 9.0.0 | Apache-2.0 | 构建工具 | 否 |
 | Gradle | 9.1.0 | Apache-2.0 | 构建工具 | 否 |
 
+## 参考实现与设计来源
+
+| 项目 | 来源 | 许可证 | 用途 |
+|---|---|---|---|
+| inkOS | [gezimos/inkOS](https://github.com/gezimos/inkOS) | GPLv3 | 翻页 / 圆环 / 竖线 / 横排 / 线框 / 表盘 / 点阵时钟的几何参数参考，按参数重绘移植，未复制源文件 |
+| 静纸（JingZhi） | momocat210 下游分支 | AGPL-3.0 | v1.1 的纯文字主页、时钟样式、壁纸与字体体系来源 |
+
 ## 已移除依赖
 
 - **YotaDevices SDK Stub**（`yotadevice_sdk-full-stub.jar`）：随 Yota 刷新管理一并移除。

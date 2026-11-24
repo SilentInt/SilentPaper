@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/launcherRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/paper">
@@ -51,7 +52,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
 
-            <TextView
+            <com.silent.paper.ui.ChipTextView
                 android:id="@+id/infoTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +75,7 @@
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp">
 
-                <TextView
+                <com.silent.paper.ui.ChipTextView
                     android:id="@+id/tabHomeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -100,7 +101,7 @@
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp">
 
-                <TextView
+                <com.silent.paper.ui.ChipTextView
                     android:id="@+id/tabAppsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -127,7 +128,7 @@
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp">
 
-                <TextView
+                <com.silent.paper.ui.ChipTextView
                     android:id="@+id/tabSettingsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -163,6 +164,7 @@
             android:id="@+id/manageBar"
             android:layout_width="match_parent"
             android:layout_height="52dp"
+            android:background="@color/paper"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingLeft="20dp"
@@ -270,6 +272,17 @@
                 android:paddingRight="24dp"
                 android:textColor="@color/ink"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/actionBatch"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:textColor="@color/ink"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/actionAppInfo"

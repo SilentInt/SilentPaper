@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.ResolveInfo
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -33,6 +34,9 @@ import kotlin.math.min
  * (see [GridSizing.computeIconPx]), so the same view behaves identically on a
  * 480x640 phone panel and on larger e-ink screens.
  */
+private const val INK_COLOR = 0xFF1A1A1A.toInt()
+private const val GRAY_COLOR = 0xFF8A8A8A.toInt()
+
 class EInkLauncherView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
@@ -59,9 +63,17 @@ class EInkLauncherView @JvmOverloads constructor(
     private var columns = 4
     private var rows = 5
 
+    /** 全局 APP 字体：由 LauncherActivity 注入，bind 时应用到应用名；null = 系统默认。 */
+    var labelTypeface: Typeface? = null
+
+    /** 全局字体粗细（描边 px）：0 = 原样 FILL；>0 = FILL_AND_STROKE 描边加粗，随 bind 应用。 */
+    var labelStrokePx = 0f
+    private var appliedLabelStroke = -1f
+
     /** Last applied square size in px; -1 until the first layout pass. */
     private var appliedIconPx = -1
     private var appliedLabelSize = -1f
+    private var appliedTypeface: Typeface? = null
 
     private var apps: List<ResolveInfo?> = emptyList()
     private var selection: Set<String> = emptySet()
@@ -140,7 +152,7 @@ class EInkLauncherView @JvmOverloads constructor(
                 else -> "○"
             }
             if (marker.text != text) marker.text = text
-            val color = if (selection.contains(pkg)) 0xFF1A1A1A.toInt() else 0xFF8A8A8A.toInt()
+            val color = if (selection.contains(pkg)) INK_COLOR else GRAY_COLOR
             if (marker.currentTextColor != color) marker.setTextColor(color)
         }
     }
@@ -221,10 +233,10 @@ class EInkLauncherView @JvmOverloads constructor(
 
         val packageName = info.activityInfo.packageName
         val isHidden = hiddenApps.contains(packageName)
+        // 隐藏应用沿用上游的淡化语义；图标本身上不再额外加任何遮罩。
         val desiredAlpha = if (isHidden) 0.35f else 1f
         if (icon.alpha != desiredAlpha) icon.alpha = desiredAlpha
-
-        val desiredLabelColor = if (isHidden) 0xFF8A8A8A.toInt() else 0xFF1A1A1A.toInt()
+        val desiredLabelColor = if (isHidden) GRAY_COLOR else INK_COLOR
         if (label.currentTextColor != desiredLabelColor) label.setTextColor(desiredLabelColor)
 
         if (manageMode) {
@@ -233,17 +245,23 @@ class EInkLauncherView @JvmOverloads constructor(
                 isHidden -> "隐"
                 else -> "○"
             }
-            val markerColor =
-                if (selection.contains(packageName)) 0xFF1A1A1A.toInt() else 0xFF8A8A8A.toInt()
             if (marker.visibility != View.VISIBLE) marker.visibility = View.VISIBLE
             if (marker.text != markerText) marker.text = markerText
+            val markerColor = if (selection.contains(packageName)) INK_COLOR else GRAY_COLOR
             if (marker.currentTextColor != markerColor) marker.setTextColor(markerColor)
             item.isClickable = true
             item.isLongClickable = false
             item.setOnClickListener { itemListener?.onItemClick(info) }
             item.setOnLongClickListener(null)
         } else {
-            if (marker.visibility != View.GONE) marker.visibility = View.GONE
+            // 非管理模式：隐藏应用在应用页可见时，右上角显示 ● 标记。
+            if (isHidden) {
+                if (marker.visibility != View.VISIBLE) marker.visibility = View.VISIBLE
+                if (marker.text != "●") marker.text = "●"
+                if (marker.currentTextColor != GRAY_COLOR) marker.setTextColor(GRAY_COLOR)
+            } else {
+                if (marker.visibility != View.GONE) marker.visibility = View.GONE
+            }
             item.isClickable = true
             item.isLongClickable = true
             item.setOnClickListener { itemListener?.onItemClick(info) }
@@ -277,10 +295,14 @@ class EInkLauncherView @JvmOverloads constructor(
 
         val iconChanged = iconPx != appliedIconPx
         val labelChanged = labelSizeSp != appliedLabelSize
-        if (!iconChanged && !labelChanged) return
+        val fontChanged = labelTypeface !== appliedTypeface
+        val strokeChanged = labelStrokePx != appliedLabelStroke
+        if (!iconChanged && !labelChanged && !fontChanged && !strokeChanged) return
 
         appliedIconPx = iconPx
         appliedLabelSize = labelSizeSp
+        appliedTypeface = labelTypeface
+        appliedLabelStroke = labelStrokePx
 
         for (holder in holders) {
             val icon = holder.icon
@@ -297,6 +319,17 @@ class EInkLauncherView @JvmOverloads constructor(
                 holder.label.layoutParams = labelLp
             }
             if (holder.label.textSize != labelSizeSp) holder.label.textSize = labelSizeSp
+            // 全局 APP 字体随版式一起应用
+            if (holder.label.typeface !== labelTypeface) holder.label.typeface = labelTypeface
+            // 字体粗细：描边加粗（对自定义字体同样生效）
+            val lpPaint = holder.label.paint
+            if (labelStrokePx > 0f) {
+                if (lpPaint.style != Paint.Style.FILL_AND_STROKE) lpPaint.style = Paint.Style.FILL_AND_STROKE
+                if (lpPaint.strokeWidth != labelStrokePx) lpPaint.strokeWidth = labelStrokePx
+            } else if (lpPaint.style != Paint.Style.FILL) {
+                lpPaint.style = Paint.Style.FILL
+                lpPaint.strokeWidth = 0f
+            }
         }
     }
 

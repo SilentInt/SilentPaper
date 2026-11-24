@@ -23,6 +23,10 @@ Major changes from the original:
   - Removed the proprietary Yota SDK stub from the build.
   - Added the home top style variants and the line/solid status icon styles.
   - Reworked launcher icons and Wi-Fi transfer for Android 4.2 compatibility.
+  - v1.1: added the text home, 12 clock styles, wallpaper, font system and
+    related settings. These features were ported and refactored from the
+    "静纸 (JingZhi)" downstream fork by momocat210 (AGPL-3.0).
+  - Clock style geometry is inspired by gezimos/inkOS (GPLv3).
 
 The full AGPL-3.0 license text is in LICENSE.
 See docs/THIRD_PARTY_NOTICES.md for bundled third-party components.

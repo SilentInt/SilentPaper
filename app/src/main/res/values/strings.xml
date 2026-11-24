@@ -27,12 +27,10 @@
 
     <!-- 首启引导 -->
     <string name="guide_title">欢迎使用 SilentPaper</string>
-    <string name="guide_body">▍主页\n• 应用按「固定优先 → 点击次数」排列。\n• 单击图标打开应用；长按图标可固定、隐藏或查看应用信息。\n• 设置 → 网格与主页 → 主页顶部风格：可在「经典居中」与「左右分栏」之间切换；状态图标可在「线条 / 实心」之间切换。\n• 单击顶部时钟进入 WiFi 传书；底部右侧锁图标单击锁屏。\n\n▍应用\n• 左右或上下滑动翻页。\n• 左上角「管理」进入批量模式：可隐藏、显示或卸载应用。\n\n▍最近任务\n• 双击底部「主页」标签打开最近任务，再次按 HOME 或点空白处关闭。\n\n▍图标\n• 默认开启自动绘制线条图标；也可在设置中选择第三方图标包。</string>
+    <string name="guide_body">▍主页\n• 应用按「固定优先 → 点击次数」排列。\n• 单击图标打开应用；长按图标可固定、隐藏或查看应用信息。\n• 设置 → 网格与图标主页 → 主页顶部风格：可在「经典居中」与「左右分栏」之间切换；状态图标可在「线条 / 实心」之间切换。\n• 单击顶部时钟进入 WiFi 传书；底部右侧锁图标单击锁屏。\n\n▍纯文字主页\n• 设置 → 纯文字主页 → 主页样式：切换「图标网格」与「纯文字」；纯文字模式不显示图标，应用名纵排成列表，单击启动、长按管理。\n• 顶部大号时钟 12 种样式（与图标主页共用），时钟下方是电池 / WiFi / 蓝牙快捷行与日期行。\n\n▍应用\n• 左右或上下滑动翻页。\n• 左上角「管理」进入批量模式：可隐藏、显示或卸载应用。\n\n▍最近任务\n• 双击底部「主页」标签打开最近任务，再次按 HOME 或点空白处关闭。\n\n▍图标\n• 默认开启自动绘制线条图标；也可在设置中选择第三方图标包。</string>
     <string name="guide_start">开用！</string>
 
     <!-- 赞赏（保留原作者的投喂入口） -->
-    <string name="donation_title">赞赏</string>
-    <string name="donation_text">微信投喂编程猫猫一根猫条</string>
     <string name="donation_prompt_title">觉得好用不妨投喂编程猫猫！</string>
     <string name="donation_close_wait">5 秒后可关闭</string>
     <string name="donation_prompt_hint">可在 设置-关于 中关闭</string>
@@ -42,7 +40,7 @@
     <string name="home_hint">长按应用可固定到主页</string>
 
     <!-- 设置 -->
-    <string name="settings_grid">网格与主页</string>
+    <string name="settings_grid">网格与图标主页</string>
     <string name="settings_home">主页</string>
     <string name="settings_system">系统</string>
     <string name="settings_icons">图标</string>
@@ -63,6 +61,9 @@
     <string name="settings_recent_cancel">最近任务取消行为</string>
     <string name="settings_help">使用说明</string>
     <string name="settings_about">关于</string>
+    <!-- 原作者赞赏二维码块（仅关于页显示） -->
+    <string name="donation_title">赞赏</string>
+    <string name="donation_text">微信投喂编程猫猫一根猫条</string>
     <string name="info_close">关闭</string>
 
     <string name="recent_window_off">关</string>
@@ -81,14 +82,99 @@
     <string name="quick_bluetooth">蓝牙</string>
     <string name="wifi_on">WiFi 开</string>
     <string name="wifi_off">WiFi 关</string>
+    <string name="wifi_settings_failed">无法打开 WiFi 设置</string>
     <string name="bt_on">蓝牙 开</string>
     <string name="bt_off">蓝牙 关</string>
 
     <string name="action_pin">固定到主页</string>
     <string name="action_unpin">取消固定</string>
     <string name="action_hide">隐藏应用</string>
+    <string name="action_batch">批量管理</string>
     <string name="action_app_info">应用信息</string>
     <string name="action_close">关闭</string>
+
+    <!-- 纯文字主页 -->
+    <string name="settings_text_group">纯文字主页</string>
+    <string name="settings_clock_group">时钟</string>
+    <string name="settings_font_group">字体</string>
+    <string name="settings_home_style">主页样式</string>
+    <string name="home_style_grid">图标网格</string>
+    <string name="home_style_text">纯文字</string>
+    <string name="settings_auto">自动</string>
+    <string name="settings_text_font_size">文字字号</string>
+    <string name="settings_text_line_spacing">行间距</string>
+    <string name="settings_text_padding">页边距</string>
+    <string name="settings_time_size">时间字号</string>
+    <string name="settings_clock_section">时钟</string>
+    <string name="settings_clock_style">时钟样式</string>
+    <string name="clock_style_split">分栏</string>
+    <string name="clock_style_colon">冒号</string>
+    <string name="clock_style_stack">堆叠</string>
+    <string name="clock_style_seg">数码管</string>
+    <string name="clock_style_pill">胶囊</string>
+    <string name="clock_style_flip">翻页</string>
+    <string name="clock_style_round">圆环</string>
+    <string name="clock_style_vsplit">竖线</string>
+    <string name="clock_style_horizontal">横排</string>
+    <string name="clock_style_outline">线框</string>
+    <string name="clock_style_analog">表盘</string>
+    <string name="clock_style_matrix">点阵</string>
+    <string name="settings_clock_align">时钟对齐</string>
+    <string name="settings_clock_context_size">时钟周边字号</string>
+    <string name="align_left">左对齐</string>
+    <string name="align_center">居中</string>
+    <string name="align_right">右对齐</string>
+    <string name="settings_clock_top">时钟上边距</string>
+    <string name="settings_clock_bottom">时钟下边距</string>
+    <string name="settings_clock_offset">时钟左右偏移</string>
+    <string name="settings_list_section">列表</string>
+    <string name="settings_list_align">列表对齐</string>
+    <string name="settings_list_top">列表上边距</string>
+    <string name="settings_list_bottom">列表下边距</string>
+    <string name="settings_list_left">列表左边距</string>
+    <string name="settings_list_right">列表右边距</string>
+    <string name="settings_slogan_on">显示底部标语</string>
+    <string name="settings_text_hide_bars">隐藏状态栏与导航栏</string>
+    <string name="settings_follow">跟随</string>
+    <string name="settings_slogan">底部标语</string>
+    <string name="settings_slogan_hint">留空则不显示</string>
+    <string name="slogan_confirm">确定</string>
+    <string name="slogan_cancel">取消</string>
+
+    <!-- APP 字体 -->
+    <string name="settings_app_font">APP 字体</string>
+    <string name="settings_clock_font">时钟字体</string>
+    <string name="app_font_default">默认（系统字体）</string>
+    <string name="clock_font_follow">跟随 APP 字体</string>
+    <string name="clock_info_date">日</string>
+    <string name="clock_info_battery">电量</string>
+    <string name="settings_text_weight">字体粗细</string>
+    <string name="settings_ui_scale">界面字号</string>
+    <string name="weight_normal">原样</string>
+    <string name="weight_bold">加粗</string>
+    <string name="weight_heavy">加重</string>
+    <string name="weight_ultra">特粗</string>
+    <string name="app_font_pick_file">从文件选择…</string>
+    <string name="app_font_pick_folder">从文件夹选择…</string>
+    <string name="font_folder_empty">这个文件夹里没有字体文件</string>
+    <string name="font_folder_pick_failed">没有可用的文件夹选择器</string>
+    <string name="font_picker_unavailable">没有可用的文件选择器</string>
+    <string name="app_font_scan_hint">点击应用；自动扫描 /sdcard/Fonts 等目录，或「从文件夹选择」指定任意目录（新系统推荐）</string>
+    <string name="app_font_invalid">字体文件无法使用</string>
+    <string name="app_font_applied">已应用字体：%1$s</string>
+    <string name="app_font_need_permission">需要存储权限才能扫描字体文件</string>
+
+    <!-- 壁纸 -->
+    <string name="settings_wallpaper_group">壁纸</string>
+    <string name="settings_wallpaper_pick">选择壁纸</string>
+    <string name="settings_wallpaper_dim_on">壁纸淡化</string>
+    <string name="settings_wallpaper_dim_level">淡化程度</string>
+    <string name="settings_hidden_in_drawer">隐藏应用在应用页可见</string>
+    <string name="settings_wallpaper_remove">移除壁纸</string>
+    <string name="wallpaper_none">无</string>
+    <string name="wallpaper_pick_failed">无法读取所选图片</string>
+    <string name="wallpaper_applied">已应用壁纸</string>
+    <string name="wallpaper_removed">已移除壁纸</string>
 
     <string name="manage">管理</string>
     <string name="manage_done">完成</string>
@@ -99,7 +185,9 @@
     <string name="divider_on">开</string>
     <string name="divider_off">关</string>
 
-    <string name="help_text">▍主页\n• 应用按「固定优先 → 点击次数」自动排列。\n• 单击应用图标打开应用；长按图标可固定 / 取消固定、隐藏或查看应用信息。\n• 设置 → 网格与主页 → 主页顶部风格：经典居中（日期 / 时间 / 状态居中）；左右分栏（时间与日期靠左，电量、WiFi、蓝牙竖排在右，点图标可开关、长按进系统设置）。\n• 设置 → 网格与主页 → 状态图标风格：电池、WiFi、蓝牙可在「线条 / 实心」之间切换。\n• 底部右侧锁屏图标：通过设备管理器锁屏，首次使用需授权。\n\n▍应用\n• 左右或上下滑动均可翻页。\n• 左上角「管理」进入批量模式：勾选应用后可隐藏、显示或卸载；点「完成」退出。\n• 长按应用图标同样可固定、隐藏或查看信息。\n• 安装 / 卸载 / 更新应用后，桌面会自动刷新应用列表。\n\n▍图标\n• 设置 → 图标包：可选择已安装的第三方图标包（支持 appfilter 映射）；未覆盖的应用自动回退系统图标。\n• 设置 → 自动绘制线条图标：开启后根据原应用图标自动生成黑色线条图标，并缓存到本地；切换开关时自动清空缓存。\n\n▍最近任务\n• 双击底部「主页」标签打开最近任务；再次按 HOME 或点空白处关闭。\n• 默认显示最近 30 分钟内使用过的应用；可在设置中调整时间范围（关 / 5分钟 / 30分钟 / 1小时 / 6小时 / 1天）。\n• 「取消」的行为可在设置中选择：回到上一应用或回到桌面。\n• 需要 Android 5.0 及以上和「使用情况访问」权限。\n\n▍状态信息\n• 单击 WiFi / 蓝牙文字直接开关；长按进入对应系统设置。\n• 单击顶部时钟打开「WiFi 传书」：手机在 25025 端口开启网页服务，电脑浏览器访问显示的上传页，文件保存到内置存储 WIFI_transfer 文件夹。\n\n▍设置\n• 设置页按分类收纳：网格与主页、图标、最近任务；点击分类标题展开，再点收起。\n• 「恢复默认」将所有设置恢复为默认值。</string>
+    <string name="help_text">▍主页\n• 应用按「固定优先 → 点击次数」自动排列。\n• 单击应用图标打开应用；长按图标可固定 / 取消固定、隐藏或查看应用信息。\n• 设置 → 网格与图标主页 → 主页顶部风格：经典居中（日期 / 状态居中）；左右分栏（日期靠左，电量、WiFi、蓝牙竖排在右；蓝牙点击开关，WiFi 在 Android 10+ 直达系统设置，长按均进设置）。顶部时间由「时钟样式」统一接管，图标主页与纯文字主页共用。\n• 设置 → 网格与图标主页 → 状态图标风格：电池、WiFi、蓝牙可在「线条 / 实心」之间切换。\n• 底部右侧锁屏图标：通过设备管理器锁屏，首次使用需授权。\n\n▍应用\n• 左右或上下滑动均可翻页。\n• 左上角「管理」进入批量模式：勾选应用后可隐藏、显示或卸载；点「完成」退出。\n• 长按应用图标同样可固定、隐藏或查看信息。\n• 安装 / 卸载 / 更新应用后，桌面会自动刷新应用列表。\n\n▍图标\n• 设置 → 图标包：可选择已安装的第三方图标包（支持 appfilter 映射）；未覆盖的应用自动回退系统图标。\n• 设置 → 自动绘制线条图标：开启后根据原应用图标自动生成黑色线条图标，并缓存到本地；切换开关时自动清空缓存。\n\n▍最近任务\n• 双击底部「主页」标签打开最近任务；再次按 HOME 或点空白处关闭。\n• 默认显示最近 30 分钟内使用过的应用；可在设置中调整时间范围（关 / 5分钟 / 30分钟 / 1小时 / 6小时 / 1天）。\n• 「取消」的行为可在设置中选择：回到上一应用或回到桌面。\n• 需要 Android 5.0 及以上和「使用情况访问」权限。\n\n▍状态信息\n• WiFi：Android 10+ 单击直达系统 WiFi 设置，旧版本单击开关；蓝牙：单击直接开关、长按进系统设置。\n• 充电时：电池图标内绘制闪电（经典 / 分栏 / 纯文字快捷行三处同步）。\n• 单击顶部时钟打开「WiFi 传书」：手机在 25025 端口开启网页服务，电脑浏览器访问显示的上传页，文件保存到内置存储 WIFI_transfer 文件夹。\n\n▍纯文字主页\n• 设置 → 纯文字主页 → 主页样式：切换「图标网格」与「纯文字」。纯文字模式不显示图标，应用名纵排成列表，单击启动，长按可固定 / 隐藏 / 查看信息，列表可滚动。\n• 内容整体靠左（自动边距约屏宽 2.5%），为右侧壁纸留位。\n• 时间字号 / 文字字号 / 行间距 / 页边距：点 − / + 逐步调整。显示「自动」时按屏幕比例取值（时间块收在屏宽 30% 内、字号约屏高 2.4% 字高、行距约 1 倍字高），点中间数值可恢复自动。\n• 时钟与列表的位置边距：时钟上/下边距 + 时钟左右偏移（0=跟随页边距）；列表上/下/左边距 + 右边距（额外缩进，给右侧壁画画作留位）。点中间数值恢复默认。\n• 顶部大号时钟随字体设置等比缩放；单击大时间进入 WiFi 传书；时钟下方依次是电池 / WiFi / 蓝牙快捷行（蓝牙点击开关，WiFi 在 Android 10+ 进系统设置；长按均进设置）与日期行，均居中于时钟宽度范围内、整组随时钟对齐锚定；电量由快捷行电池项显示，日期行不再重复。
+• 时钟周边字号：统一调整时钟周围小字（日期 / 电池 WiFi 蓝牙状态行 / 纯文字快捷行与信息行），两主页同步生效，点中间数值恢复自动。\n• 时钟样式（12 种）图标主页与纯文字主页共用：图标主页隐藏顶部原生时间，由样式时钟接管显示——经典居中插在日期与状态行之间（居中、76sp 原尺寸），左右分栏在左列原位（60sp），只换外观不改版式；改动即时生效。
+• 隐藏状态栏与导航栏：开启后纯文字主页沉浸式全屏（仅主页页生效），切到应用 / 设置页自动恢复。\n• 长按应用 → 批量管理：列表显示全部应用（○ 未选 / ● 选中 / 隐 已隐藏），单击切换选中，点击区域仅限文字本身，底部可批量隐藏 / 显示 / 卸载。\n• 底部标语：可自定义文字，并有独立显示开关，关闭后不显示。\n\n▍壁纸\n• 选择壁纸：从相册 / 文件管理器选图，自动灰度化；图标网格与纯文字模式均生效。\n• 壁纸铺满整窗（含底部标签栏区域）：底部「主页/应用/设置」标签栏透明、壁纸从其下透出；底部标签文字与图标主页应用名使用纸色圆角底片，深色壁纸上仍可读；应用 / 设置页自带纸色背景盖住壁纸。\n• 壁纸淡化：开 = 按淡化程度与纸色混合（默认 60 水印感）；关 = 原图灰度直出。淡化程度 0–90% 可调，点中间数值恢复默认。\n• 移除壁纸：恢复纯纸色背景。\n\n▍字体\n• 设置 → APP 字体：扫描 /sdcard/Fonts、Download 等目录的 ttf/otf/ttc 字体，对话框内逐行预览，点击全局应用（主页 / 应用 / 设置全生效）；「从文件夹选择…」可指定任意文件夹（SAF 持久授权，Android 11+ 分区存储下的推荐方式，选过一次每次打开自动列出）；也可从文件选择器挑任意字体；「默认」一键还原系统字体。\n• 设置 → 时钟字体：为纯文字主页的大号时钟单独指定字体，默认「跟随 APP 字体」。\n• 设置 → 字体粗细：原样 / 加粗 / 加重 / 特粗，全局描边加粗（墨水屏对比度拉满）。\n• 设置 → 界面字号：80–140% 全局缩放，图标主页 / 纯文字主页 / 设置页整体生效（改后整页重建一次）；时钟字号与时钟周边字号另有独立旋钮，不随此缩放。\n\n▍隐藏应用\n• 设置 → 网格与图标主页 → 隐藏应用在应用页可见：开启后，主页隐藏的应用仍在应用页显示（右上角 ● 标记）、可正常启动；关闭则两处都隐藏。\n\n▍设置\n• 设置页按分类收纳：网格与图标主页、纯文字主页、时钟、字体、图标、壁纸、最近任务；点击分类标题展开，再点收起。\n• 「恢复默认」将所有设置恢复为默认值。</string>
 
-    <string name="about_text">SilentPaper\n\n白纸黑字、1px 灰线、无卡片的极简桌面。\n\n· 主页网格与应用抽屉，固定优先、点击次数排序\n· 左右与上下手势翻页\n· 主页顶部双风格：经典居中 / 左右分栏\n· 状态图标双风格：线条 / 实心（电池、WiFi、蓝牙）\n· 图标包自定义（支持 appfilter 映射）\n· 自动绘制线条图标（由原图标生成，本地缓存）\n· 最近任务（Android 5.0+，需要「使用情况访问」权限）\n· WiFi 传书（25025 端口，文件保存至 WIFI_transfer）\n· 锁屏：通过设备管理器实现\n· 应用安装 / 卸载 / 更新后自动刷新列表\n\n▍来源与许可\n· 本项目源自 SilentInt/YotaPaper，遵循 GNU AGPL-3.0\n  github.com/SilentInt/YotaPaper\n· 已移除 Xposed、Root、Yota EPD 刷新管理与控制中心等 Yota 特化功能\n\n▍开源库与引用\n• ZXing Core 3.5.1 — 二维码生成，Apache-2.0\n  github.com/zxing/zxing\n• Kotlin 标准库 — Apache-2.0\n  github.com/JetBrains/kotlin\n• 构建：Gradle + Android Gradle Plugin（AGP 9.0.0）\n  developer.android.com/build\n\n版本：v1.0\n\n原作者：@Silentint\n邮箱：silentint@foxmail.com</string>
+    <string name="about_text">SilentPaper\n\n白纸黑字、1px 灰线、无卡片的极简桌面。\n\n▍主页\n· 主页网格与应用抽屉，固定优先、点击次数排序\n· 主页顶部双风格：经典居中 / 左右分栏\n· 状态图标双风格：线条 / 实心（电池、WiFi、蓝牙）\n· 12 种时钟样式：分栏 / 冒号 / 堆叠 / 数码管 / 胶囊 / 翻页 / 圆环 / 竖线 / 横排 / 线框 / 表盘 / 点阵\n· 纯文字主页：应用名列表 + 大号时钟与信息行，字号 / 行距 / 页边距 / 对齐可调\n· 壁纸：选图后自动灰度化并按比例混入纸色\n· APP 字体 / 时钟字体 / 字体粗细 / 界面字号 / 时钟周边字号\n· 左右与上下手势翻页\n· 图标包自定义（支持 appfilter 映射）\n· 自动绘制线条图标（由原图标生成，本地缓存）\n· 最近任务（Android 5.0+，需要「使用情况访问」权限）\n· WiFi 传书（25025 端口，文件保存至 WIFI_transfer）\n· 锁屏：通过设备管理器实现\n· 应用安装 / 卸载 / 更新后自动刷新列表\n· 去 Yota 化：移除 Xposed、Root、背屏 SDK、刷新与动画、控制中心，最低 Android 4.2\n\n▍来源与许可\n· 本项目源自 SilentInt/YotaPaper，遵循 GNU AGPL-3.0\n  github.com/SilentInt/YotaPaper\n· 时钟样式参考 gezimos/inkOS（GPLv3），按几何参数重绘移植\n· 开源库：ZXing Core 3.5.1 — 二维码生成（Apache-2.0）、Kotlin 标准库（Apache-2.0）\n· 构建：Gradle + Android Gradle Plugin（AGP 9.0.0）\n  developer.android.com/build\n\n版本：v1.1\n\n原作者：@Silentint\n邮箱：silentint@foxmail.com</string>
 </resources>
