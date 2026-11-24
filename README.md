@@ -1,148 +1,64 @@
-# SilentPaper
+# 静纸（JingZhi）v1.9
 
-> 白纸黑字 · 1px 灰线 · 无卡片 · 无打扰 —— 一个纯 Android 极简桌面。
+> 基于 SilentPaper 的独立共存修改版 —— 把极简墨水屏桌面带到普通 Android 设备（含掌阅 Neo 3 Ultra / Android 14）。
 
-SilentPaper 是一个单 Activity、无 AndroidX 依赖的极简启动器：白色纸面、黑色文字、1px 灰色发丝线，没有卡片、阴影和多余装饰。它源自 [SilentInt/YotaPaper](https://github.com/SilentInt/YotaPaper)，移除了全部 Yota 特化能力，回归一个可在普通 Android 设备上使用的纯净桌面。
+静纸是 [SilentInt/SilentPaper v1.0](https://github.com/SilentInt/SilentPaper/releases/tag/v1.0) 的下游衍生版，使用独立包名 `com.momocat.silentpaper`（应用名「静纸」），可与原版 SilentPaper 在同一台设备上共存。本仓库的 `jingzhi-v1.9` 分支承载 v1.9 全部改造。
 
-## 功能
+> 本项目遵循上游的 **GNU AGPL-3.0** 许可，完整保留原作者署名与本说明。
 
-### 主页
-- 自适应网格，应用按「固定优先 → 点击次数」自动排序
-- 单击图标打开应用；长按弹出操作菜单：固定 / 取消固定、隐藏、应用信息
-- 双击底部「主页」标签打开最近任务
-- 顶部两套风格（设置 → 网格与主页）：
-  - **经典居中**：日期、时间、状态行居中
-  - **左右分栏**：时间日期靠左，电量 / 蓝牙 / WiFi 竖排右对齐
-- 状态图标两套风格：**线条 / 实心**（电池、WiFi、蓝牙）
-- 自绘电池图标，按墨屏像素对齐，四格 / 连续填充两种画法
+## v1.9 亮点
 
-### 应用抽屉
-- 自适应网格，左右或上下滑动翻页
-- 左上角「管理」进入批量模式：隐藏 / 显示 / 卸载
-- 应用安装、卸载、更新后自动刷新
+- **修复 Android 11+ 启动崩溃**：状态栏纸色设置移到 `setContentView` 之后，解决 API 30+ 的 DecorView NPE。
+- **时钟样式两主页共用**：12 种时钟样式在图标主页 / 纯文字主页复用，图标主页原位原尺寸、改动即时生效。
+- **时钟周边字号 / 界面字号**两档独立旋钮，与时间字号三档互不干扰。
+- **时钟下快捷行**：电池 / WiFi / 蓝牙快捷行，随线条 / 实心风格，点击直达对应设置。
+- **纯文字主页沉浸式**：可隐藏状态栏与导航栏。
+- **壁纸铺满整窗 + 底部标签栏透明 + 纸色底片衬底**，深色壁纸下文字仍可读。
+- **修复 Android 11+ 字体无法选择**：新增 SAF「从文件夹选择字体」入口，持久授权跨重启。
+- 充电闪电指示、批量管理点击区收窄、隐藏标记改实心圆、WiFi 图标直达设置等共 16 项迭代。
 
-### 最近任务
-- 双击「主页」标签或双击 HOME 打开，网格展示
-- 时间范围：关 / 5 分钟 / 30 分钟 / 1 小时 / 6 小时 / 1 天
-- 一键清空；取消行为可选「回到上一应用 / 回到桌面」
-- 依赖系统使用情况统计，仅 Android 5.0（API 21）及以上可用
-
-### 其他
-- 第三方图标包（appfilter 映射）与自动线条图标
-- WiFi / 蓝牙状态显示与开关（Android 12+ 未授权时跳转系统设置）
-- WiFi 传书：25025 端口网页上传，文件保存到 `WIFI_transfer`
-- 锁屏：通过设备管理器实现
-- 设置项：网格行列、分割线、顶部风格、图标风格、图标包、线条图标、最近任务、恢复默认
-
-## 与原版 YotaPaper 的差异
-
-已移除：
-
-| 模块 | 内容 |
-|---|---|
-| Xposed | 模块入口、`MainHook` / `EpdPageTurnHook` / `SwipeTracker` |
-| Root | libsu Root Shell、强制停止、Root 清理后台 |
-| Yota EPD | 背屏 SDK、刷新模式、翻页 / 开屏 / 息屏动画、EPD 参数管理与 Provider 同步 |
-| 控制中心 | 下拉手势服务、浮层面板、通知 / 媒体读取、飞行模式 / 电源等快捷开关 |
-
-同时把应用标识从 `com.yota.launcher` 改为 `com.silent.paper`，版本重置为 1.0。
-
-## 安卓版本需求
-
-| 项目 | 值 |
-|---|---|
-| 最低支持 | **Android 4.2（API 17，minSdk 17）** |
-| 目标 / 编译 SDK | Android 16（API 36） |
-| 最近任务 | Android 5.0（API 21）及以上 |
-
-## 构建
-
-### 环境
-- JDK 17+
-- Android SDK 36（`platforms/android-36`、`build-tools/36.0.0`）
-- 自带 Gradle Wrapper（Gradle 9.1.0）
-
-### WSL / Linux / macOS
-
-```bash
-export JAVA_HOME=/path/to/jdk-21
-export ANDROID_HOME=$HOME/Android/Sdk
-./gradlew assembleDebug
-```
-
-或在项目根目录创建 `local.properties`（已被 gitignore）：
-
-```properties
-sdk.dir=/home/user/Android/Sdk
-```
-
-### Windows
-
-```bat
-set ANDROID_HOME=C:\tools\android-sdk
-gradlew.bat assembleDebug
-```
-
-一键脚本：
-
-```bat
-scripts\build.bat
-scripts\deploy.bat
-```
-
-或 WSL / Linux：
-
-```bash
-scripts/build.sh
-scripts/deploy.sh
-```
-
-产物：`app/build/outputs/apk/debug/app-debug.apk`。
-
-## 安装与权限
-
-```bash
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-adb shell appops set com.silent.paper GET_USAGE_STATS allow
-adb shell am start -n com.silent.paper/.LauncherActivity
-```
-
-| 权限 | 用途 |
-|---|---|
-| `PACKAGE_USAGE_STATS` | 最近任务（需在系统设置或 adb 授予） |
-| `QUERY_ALL_PACKAGES` | 枚举已安装应用 |
-| `REQUEST_DELETE_PACKAGES` | 管理模式卸载 |
-| `ACCESS_WIFI_STATE` / `CHANGE_WIFI_STATE` | WiFi 状态与开关 |
-| `BLUETOOTH` / `BLUETOOTH_ADMIN` / `BLUETOOTH_CONNECT` | 蓝牙状态与开关（32+ 需要运行时授权） |
-| `ACCESS_NETWORK_STATE` / `INTERNET` | WiFi 传书 |
-| `KILL_BACKGROUND_PROCESSES` | 最近任务清理 |
-| `WRITE_EXTERNAL_STORAGE`（≤28） | WiFi 传书写入文件 |
+完整逐项说明见 [静纸-v1.9-说明.md](静纸-v1.9-说明.md)，版本历史见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 目录
 
-```
-app/src/main/java/com/silent/paper/
-├── LauncherActivity.kt        主界面：三页切换、网格、最近任务、WiFi 传书、锁屏
-├── LockAdminReceiver.kt       设备管理器锁屏
-├── QrCodes.kt                 ZXing 二维码封装
-├── WifiTransferServer.kt      WiFi 传书 HTTP 服务
-├── data/
-│   ├── Models.kt              配置模型
-│   ├── LauncherConfigStore.kt 设置持久化
-│   ├── AppRepository.kt       应用列表、隐藏/固定、点击次数
-│   ├── RecentTasks.kt         最近任务（API 21+ 隔离实现）
-│   └── grid/GridSizing.kt     自适应行列与图标尺寸计算
-└── ui/
-    ├── EInkLauncherView.kt    网格 ViewGroup
-    ├── BatteryIconView.kt     线条 / 实心电池图标
-    ├── IconLoader.kt          系统图标 / 图标包 / 线条图标
-    ├── LineIconRenderer.kt    线条图标生成
-    ├── SettingsController.kt  设置页
-    └── StatusBarController.kt 电量 / WiFi / 蓝牙状态
+| 路径 | 说明 |
+|---|---|
+| `app/src/main/java/com/silent/paper/` | 应用源码（单 Activity，无 AndroidX） |
+| `app/src/main/res/` | 布局 / 可绘制 / 资源 |
+| `docs/` | 架构、用户指南、第三方声明 |
+| `素材/` | v1.9 真机验证截图（7 张） |
+| `静纸-1.9-release.apk` | 已签名安装包（debug 证书，versionCode 10） |
+| `静纸-v1.9-说明.md` | v1.9 交付说明（逐项改动与实机验证记录） |
+| `CHANGELOG.md` | v1.1–v1.9 更新日志 |
+| `scripts/` | 构建 / 部署辅助脚本 |
+
+## 构建
+
+环境：JDK 17+、Android SDK 36（platforms/android-36、build-tools/36.0.0）、自带 Gradle Wrapper。
+
+```bash
+export ANDROID_HOME=$HOME/Android/Sdk
+./gradlew assembleDebug
+# 产物：app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## 许可证与来源
+Windows 可用 `scripts\build.bat`。打包 release 使用 debug 测试证书便于直接安装；如需正式签名请自行替换 `app/build.gradle.kts` 中的 signingConfig。
 
-- 本项目源自 [SilentInt/YotaPaper](https://github.com/SilentInt/YotaPaper)，遵循 **GNU AGPL-3.0**，全文见 [LICENSE](LICENSE)。
-- 与原版一样，衍生版本也必须以 AGPL-3.0 发布，并保留本说明。
-- ZXing Core 为 Apache-2.0；Kotlin 标准库为 Apache-2.0。详见 [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md)。
+## 安装
+
+```bash
+adb install -r 静纸-1.9-release.apk
+```
+
+应用为桌面启动器，安装后在系统桌面选择器中将其设为默认桌面即可。配置、壁纸、字体原地保留升级。
+
+## 来源与许可
+
+- 原版：[SilentInt/SilentPaper v1.0](https://github.com/SilentInt/SilentPaper)，源自 [SilentInt/YotaPaper](https://github.com/SilentInt/YotaPaper)，遵循 **GNU AGPL-3.0**。
+- 时钟样式几何参数参考 [gezimos/inkOS](https://github.com/gezimos/inkOS)（GPLv3）。
+- 第三方组件：ZXing Core 3.5.1、Kotlin 标准库（Apache-2.0），详见 [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md)。
+- 许可证全文见 [LICENSE](LICENSE)，署名见 [NOTICE](NOTICE)。
+
+衍生版本须继续以 AGPL-3.0 发布并保留署名。
+
+修改者：momo_cat · 包名 `com.momocat.silentpaper`。

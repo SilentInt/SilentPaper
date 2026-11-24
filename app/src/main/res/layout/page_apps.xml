@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-            <!-- APPS -->
+            <!-- APPS（纸色实底：壁纸铺满整窗后，非主页页必须盖住壁纸） -->
             <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/pageApps"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/paper"
                 android:visibility="gone">
 
                 <com.silent.paper.ui.EInkLauncherView
