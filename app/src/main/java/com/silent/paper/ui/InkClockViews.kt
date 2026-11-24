@@ -64,6 +64,7 @@ class FlipClockView @JvmOverloads constructor(
         bandDigitPaint.typeface = tf
         colonPaint.typeface = tf
         requestLayout()
+        invalidate()
     }
 
     fun setTime(hh: String, mm: String) {
@@ -286,9 +287,10 @@ class AnalogClockView @JvmOverloads constructor(
 }
 
 /**
- * 点阵时钟：月历 7×5（已过实心、未到虚点）+ 时钟 17×5（3×5 数字点阵）+ 电量 7×5，
- * 三块横排，块间空 1 列；点距 = 0.22em，点径 = 0.65 点距，虚点 = 1/3 径，
- * 同 inkOS Matrix（墨水屏上虚点等效稀疏点阵 shader）。
+ * 点阵时钟：月历 7×5（跨 6 周时自动扩为 7×6；已过实心、未到虚点）+
+ * 时钟 17×5（3×5 数字点阵）+ 电量 7×5，三块横排，块间空 1 列；
+ * 点距 = 0.22em，点径 = 0.65 点距，虚点 = 1/3 径，同 inkOS Matrix
+ * （墨水屏上虚点等效稀疏点阵 shader）。
  */
 class MatrixClockView @JvmOverloads constructor(
     context: Context,
@@ -334,6 +336,9 @@ class MatrixClockView @JvmOverloads constructor(
     private var mm = "00"
     private var batteryPct = -1
 
+    /** 当前测量的月历行数（5 或 6）；月份跨 6 周时由 setTime 触发重新测量。 */
+    private var measuredCalendarRows = 5
+
     var sizePx = 0f
         set(value) {
             if (field == value) return
@@ -345,7 +350,21 @@ class MatrixClockView @JvmOverloads constructor(
         if (hh == h && mm == m) return
         hh = h
         mm = m
+        // 跨月时行列数可能从 5 变 6（或反向），高度需要重算。
+        val rows = maxOf(5, calendarRows())
+        if (rows != measuredCalendarRows) {
+            measuredCalendarRows = rows
+            requestLayout()
+        }
         invalidate()
+    }
+
+    /** 月历需要 5 行还是 6 行：1 号所在星期 + 当月天数超过 35 格就必须 6 行。 */
+    private fun calendarRows(): Int {
+        val cal = Calendar.getInstance()
+        val first = Calendar.getInstance().apply { set(Calendar.DAY_OF_MONTH, 1) }
+        val firstDow = (first.get(Calendar.DAY_OF_WEEK) + 5) % 7
+        return if (firstDow + cal.getActualMaximum(Calendar.DAY_OF_MONTH) > 35) 6 else 5
     }
 
     /** 电量 0..100；< 0 = 未知，不画电量块（整块少 8 列）。 */
@@ -365,7 +384,9 @@ class MatrixClockView @JvmOverloads constructor(
             return
         }
         val p = pitch()
-        setMeasuredDimension((columns() * p).toInt(), (5 * p).toInt())
+        val rows = maxOf(5, calendarRows())
+        measuredCalendarRows = rows
+        setMeasuredDimension((columns() * p).toInt(), (rows * p).toInt())
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -382,7 +403,8 @@ class MatrixClockView @JvmOverloads constructor(
         val daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
         val first = Calendar.getInstance().apply { set(Calendar.DAY_OF_MONTH, 1) }
         val firstDow = (first.get(Calendar.DAY_OF_WEEK) + 5) % 7   // 周一 = 0
-        for (row in 0 until 5) for (col in 0 until 7) {
+        val rows = maxOf(5, calendarRows())
+        for (row in 0 until rows) for (col in 0 until 7) {
             val dayNum = row * 7 + col - firstDow + 1
             val r = when {
                 dayNum in 1..today -> dotR

@@ -111,7 +111,7 @@ class BatteryIconView @JvmOverloads constructor(
     /** true = 实心方框版，false = 线条四格版 */
     private var block = false
 
-    /** 充电中：电池框正中叠加闪电（电量条上用纸色抠形，空框上用墨色） */
+    /** 充电中：电池框正中叠加闪电（纸色实底 + 墨色描边，纸底与墨色电量条上都可见）。 */
     private var charging = false
 
     private val boltPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ink }
@@ -202,7 +202,7 @@ class BatteryIconView @JvmOverloads constructor(
 
         if (percent !in 0..100) {
             if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
-                frameW * 0.55f, frameH * 0.70f, overInk = false)
+                frameW * 0.55f, frameH * 0.70f)
             return
         }
 
@@ -229,7 +229,7 @@ class BatteryIconView @JvmOverloads constructor(
             )
         }
         if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
-            frameW * 0.55f, frameH * 0.70f, overInk = bars > 0)
+            frameW * 0.55f, frameH * 0.70f)
     }
 
     // ---------------------------------------------------------------- 实心版
@@ -281,7 +281,7 @@ class BatteryIconView @JvmOverloads constructor(
 
         if (percent !in 0..100) {
             if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
-                frameW * 0.50f, frameH * 0.70f, overInk = false)
+                frameW * 0.50f, frameH * 0.70f)
             return
         }
 
@@ -290,7 +290,7 @@ class BatteryIconView @JvmOverloads constructor(
         val fillW = round(inner * percent / 100f).toInt()
         if (fillW <= 0) {
             if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
-                frameW * 0.50f, frameH * 0.70f, overInk = false)
+                frameW * 0.50f, frameH * 0.70f)
             return
         }
         canvas.drawRect(
@@ -298,17 +298,17 @@ class BatteryIconView @JvmOverloads constructor(
             (left + border + fillW).toFloat(), (top + frameH - border).toFloat(), fillPaint
         )
         if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
-            frameW * 0.50f, frameH * 0.70f, overInk = true)
+            frameW * 0.50f, frameH * 0.70f)
     }
 
     /**
-     * 充电闪电：画在电池框正中。压在电量条/填充上时用纸色（把闪电从墨色填充里
-     * 「抠」出来，同 Material 充电图标的思路）；框里没填充时用墨色，保证空电也能看见。
+     * 充电闪电：画在电池框正中。纸色实底 + 墨色描边，两种背景下都能看见：
+     * 空框/低电量时靠墨色轮廓，压在墨色电量条上时纸色实底把闪电「抠」出来。
+     * 旧做法在低电量时用纸色填充、闪电又落在纸色背景上，会完全消失。
      * 顶点取 Font Awesome bolt 的多边形归一化坐标，按目标框缩放。
      */
-    private fun drawBolt(canvas: Canvas, cx: Float, cy: Float, w: Float, h: Float, overInk: Boolean) {
+    private fun drawBolt(canvas: Canvas, cx: Float, cy: Float, w: Float, h: Float) {
         if (w < 6f || h < 8f) return
-        boltPaint.color = if (overInk) paper else ink
         val left = cx - w / 2f
         val top = cy - h / 2f
         boltPath.reset()
@@ -320,6 +320,14 @@ class BatteryIconView @JvmOverloads constructor(
         boltPath.lineTo(left + w * 0.625f, top + h * 0.40f)
         boltPath.lineTo(left + w * 0.75f, top)
         boltPath.close()
+        boltPaint.style = Paint.Style.FILL
+        boltPaint.color = paper
         canvas.drawPath(boltPath, boltPaint)
+        boltPaint.style = Paint.Style.STROKE
+        boltPaint.color = ink
+        boltPaint.strokeWidth = max(1f, h * 0.10f)
+        boltPaint.strokeJoin = Paint.Join.ROUND
+        canvas.drawPath(boltPath, boltPaint)
+        boltPaint.style = Paint.Style.FILL
     }
 }

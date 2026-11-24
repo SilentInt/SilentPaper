@@ -241,6 +241,7 @@ class StatusBarController(private val activity: Activity) {
         wifiText.setTextColor(if (wifiEnabled) ink else gray)
         wifiIcon.setColorFilter(if (wifiEnabled) ink else gray)
         textWifiIcon.setColorFilter(if (wifiEnabled) ink else gray)
+        textWifiText.setTextColor(if (wifiEnabled) ink else gray)
         textWifiText.setIfChanged(wifiText.text)
         splitWifiText.setIfChanged(
             fitCjk(activity.getString(if (wifiEnabled) R.string.wifi_on else R.string.wifi_off))
@@ -265,6 +266,7 @@ class StatusBarController(private val activity: Activity) {
         btText.setTextColor(if (btOn) ink else gray)
         btIcon.setColorFilter(if (btOn) ink else gray)
         textBtIcon.setColorFilter(if (btOn) ink else gray)
+        textBtText.setTextColor(if (btOn) ink else gray)
         textBtText.setIfChanged(btText.text)
         splitWifiIcon.setColorFilter(if (wifiEnabled) ink else gray)
         splitBtIcon.setColorFilter(if (btOn) ink else gray)

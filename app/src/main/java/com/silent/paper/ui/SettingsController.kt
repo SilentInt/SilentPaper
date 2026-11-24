@@ -688,8 +688,14 @@ class SettingsController(
         return ((sp / 2f).toInt() * 2).coerceIn(FONT_MIN, FONT_MAX)
     }
 
-    private fun autoSpacing(): Int =
-        ((autoFontSize() * 0.85f / 4f).toInt() * 4).coerceIn(SPACING_MIN, SPACING_MAX)
+    /** 与 TextHomeController.resolvedLineSpacingDp() 同源：手动字号优先于屏幕自动字号。 */
+    private fun autoSpacing(): Int {
+        val fontSp = currentConfig().textFontSize
+            .takeIf { it > 0 }
+            ?.coerceIn(FONT_MIN, FONT_MAX)
+            ?: autoFontSize()
+        return ((fontSp * 0.85f / 4f).toInt() * 4).coerceIn(SPACING_MIN, SPACING_MAX)
+    }
 
     private fun autoPadding(): Int {
         val dm = activity.resources.displayMetrics

@@ -822,6 +822,10 @@ class LauncherActivity : Activity() {
             gridHome.visibility = View.GONE
             textHome.show()
             clockArea.show()
+            // 快捷行也要跟随「状态图标风格」；纯文字分支原先在设置之前就 return 了。
+            if (::statusController.isInitialized) {
+                statusController.setIconStyle(config.homeTopIconStyle)
+            }
             applyTextHomeMetrics()
             StartupTracer.stage("refreshHome-textMetrics")
             textHome.populate(homeManage, repository.hiddenPackages(), manageSelected)
@@ -1700,17 +1704,27 @@ class LauncherActivity : Activity() {
         }
     }
 
+    /** 上一次写入的顶栏时间/日期；电量广播会高频触发 updateClock()，按值去重避免重复布局。 */
+    private var lastClockTime = ""
+    private var lastClockDate = ""
+
     private fun updateClock() {
         if (!::textTime.isInitialized) return
         val now = Date()
         val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(now)
         // 日期统一格式：X月X日，星期X（如 11月22日，星期日）
         val date = SimpleDateFormat("M月d日，EEEE", Locale.CHINA).format(now)
-        textTime.text = time
-        textDate.text = date
-        textTimeSplit.text = time
-        textDateSplit.text = date
-        infoTime.text = time
+        if (time != lastClockTime) {
+            textTime.text = time
+            textTimeSplit.text = time
+            infoTime.text = time
+            lastClockTime = time
+        }
+        if (date != lastClockDate) {
+            textDate.text = date
+            textDateSplit.text = date
+            lastClockDate = date
+        }
 
         // 共用时钟区：12 种样式同步更新（信息行显示纯日期，电量由快捷行电池项承担）
         val hh = SimpleDateFormat("HH", Locale.getDefault()).format(now)

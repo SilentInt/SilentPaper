@@ -6,10 +6,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.ColorMatrix
+import android.graphics.ColorFilter
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Matrix
+import android.graphics.PixelFormat
 import android.graphics.Paint
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.view.View
@@ -111,7 +113,7 @@ class WallpaperController(private val activity: Activity) {
             return
         }
         val key = "$widthPx|$heightPx|$dimPct|${file.lastModified()}|${file.length()}"
-        if (key == lastKey && target.background is BitmapDrawable) return
+        if (key == lastKey && target.background is CoverDrawable) return
         val bmp = render(file, widthPx, heightPx, dimPct)
         if (bmp == null) {
             lastKey = ""
@@ -119,7 +121,7 @@ class WallpaperController(private val activity: Activity) {
             return
         }
         lastKey = key
-        target.background = BitmapDrawable(activity.resources, bmp)
+        target.background = CoverDrawable(bmp)
     }
 
     fun clear() {
@@ -181,4 +183,43 @@ class WallpaperController(private val activity: Activity) {
         if (raw != out) raw.recycle()
         return out
     }
+}
+
+/**
+ * 把位图按 center-crop（cover）绘制到任意 Drawable 边界：
+ * 背景视图可能比屏幕矮（系统栏不占窗口），BitmapDrawable 默认 FILL 会把图
+ * 纵向压扁；这里按 max(宽比,高比) 缩放并居中裁切，窗口尺寸变化也不变形。
+ */
+private class CoverDrawable(private val bitmap: Bitmap) : Drawable() {
+
+    private val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+    private val matrix = Matrix()
+
+    override fun draw(canvas: Canvas) {
+        if (bitmap.isRecycled) return
+        val b = bounds
+        if (b.width() <= 0 || b.height() <= 0 || bitmap.width <= 0 || bitmap.height <= 0) return
+        val scale = maxOf(
+            b.width().toFloat() / bitmap.width,
+            b.height().toFloat() / bitmap.height
+        )
+        val dx = b.left + (b.width() - bitmap.width * scale) * 0.5f
+        val dy = b.top + (b.height() - bitmap.height * scale) * 0.5f
+        matrix.setScale(scale, scale)
+        matrix.postTranslate(dx, dy)
+        canvas.drawBitmap(bitmap, matrix, paint)
+    }
+
+    override fun setAlpha(alpha: Int) {
+        paint.alpha = alpha
+        invalidateSelf()
+    }
+
+    override fun setColorFilter(colorFilter: ColorFilter?) {
+        paint.colorFilter = colorFilter
+        invalidateSelf()
+    }
+
+    @Suppress("DEPRECATION")
+    override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 }

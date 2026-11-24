@@ -110,29 +110,36 @@ class ClockAreaController(
         if (homeClockArea.visibility != View.VISIBLE) homeClockArea.visibility = View.VISIBLE
     }
 
-    /** 时间/日期/电量刷新：12 种样式与信息行同步。 */
+    /** 时间/日期/电量刷新：12 种样式与信息行同步。
+     *  电量广播也会走到这里，所有文本都按值去重，避免相同内容重复布局/重绘。 */
     fun update(hh: String, mm: String, date: String, battery: Int) {
         if (!::homeBigTimeHour.isInitialized) return
-        homeBigTimeHour.text = hh
-        homeBigTimeMin.text = mm
-        homeBigTimeHourStack.text = hh
-        homeBigTimeMinStack.text = mm
+        if (homeBigTimeHour.text.toString() != hh || homeBigTimeMin.text.toString() != mm) {
+            homeBigTimeHour.text = hh
+            homeBigTimeMin.text = mm
+            homeBigTimeHourStack.text = hh
+            homeBigTimeMinStack.text = mm
+        }
         homeClockSeg.setTime(hh + mm)
-        if (homeInfoLine.text.toString() != date) homeInfoLine.text = date
+        setTextIfChanged(homeInfoLine, date)
 
         val batt = if (battery >= 0) "$battery%" else ""
         homeClockFlip.setTime(hh, mm)
         homeClockRound.setTime(hh, mm)
-        homeVSplitHour.text = hh
-        homeVSplitMin.text = mm
-        homeVSplitDate.text = date
-        homeVSplitBatt.text = batt
-        homeHorizTime.text = "$hh:$mm"
-        homeHorizDate.text = date
-        homeHorizBatt.text = batt
+        setTextIfChanged(homeVSplitHour, hh)
+        setTextIfChanged(homeVSplitMin, mm)
+        setTextIfChanged(homeVSplitDate, date)
+        setTextIfChanged(homeVSplitBatt, batt)
+        setTextIfChanged(homeHorizTime, "$hh:$mm")
+        setTextIfChanged(homeHorizDate, date)
+        setTextIfChanged(homeHorizBatt, batt)
         homeClockAnalog.setTime(hh, mm)
         homeClockMatrix.setTime(hh, mm)
         homeClockMatrix.setBattery(battery)
+    }
+
+    private fun setTextIfChanged(view: TextView, text: String) {
+        if (view.text.toString() != text) view.text = text
     }
 
     /** 时钟字体：文本变体直接换字面，自绘变体交给各自 View。 */
@@ -317,16 +324,22 @@ class ClockAreaController(
             row.setPadding(padH, padV, padH, padV)
         }
 
-        // 字号：文本类变体用 DIP 写入（时钟自有「时间字号」旋钮，不随界面字号缩放）
-        if (homeBigTimeHour.textSize != timePx) {
-            for (tv in listOf(
-                homeBigTimeHour, homeBigTimeMin, homeBigTimeColon,
-                homeBigTimeHourStack, homeBigTimeMinStack
-            )) {
-                tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, timeSp)
-            }
+        // 字号：文本类变体用 DIP 写入（时钟自有「时间字号」旋钮，不随界面字号缩放）。
+        // 每组单独比较自己的当前字号：竖线/横排的 em 与 timeSp 无关，不能挂在
+        // homeBigTimeHour 的比较上，否则样式切换时这一组不会更新。
+        val rowTextViews = listOf(
+            homeBigTimeHour, homeBigTimeMin, homeBigTimeColon,
+            homeBigTimeHourStack, homeBigTimeMinStack
+        )
+        if (rowTextViews.any { it.textSize != timePx }) {
+            for (tv in rowTextViews) tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, timeSp)
+        }
+        val emPxCurrent = emSp * density
+        if (homeVSplitHour.textSize != emPxCurrent) {
             homeVSplitHour.setTextSize(TypedValue.COMPLEX_UNIT_DIP, emSp)
             homeVSplitMin.setTextSize(TypedValue.COMPLEX_UNIT_DIP, emSp)
+        }
+        if (homeHorizTime.textSize != emPxCurrent) {
             homeHorizTime.setTextSize(TypedValue.COMPLEX_UNIT_DIP, emSp)
         }
         if (homeClockSeg.digitHeight != timePx) homeClockSeg.digitHeight = timePx
@@ -342,9 +355,9 @@ class ClockAreaController(
             homeHorizBatt.setTextSize(TypedValue.COMPLEX_UNIT_DIP, smallSp)
         }
 
-        // 信息行：图标主页与自带日期电量的样式（圆环/竖线/横排/表盘/点阵）隐藏
-        val infoGone = !textMode || style == 6 || style == 7 || style == 8 ||
-                style == 10 || style == 11
+        // 信息行：图标主页隐藏；竖线/横排/点阵自带日期电量，也隐藏。
+        // 圆环/表盘只画时间，日期仍由信息行承担。
+        val infoGone = !textMode || style == 7 || style == 8 || style == 11
         setVisible(homeInfoLine, !infoGone)
 
         // WiFi/蓝牙快捷行：仅纯文字主页显示（图标主页顶部已有状态行）
