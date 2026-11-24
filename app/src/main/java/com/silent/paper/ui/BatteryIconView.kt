@@ -3,6 +3,7 @@ package com.silent.paper.ui
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
@@ -87,6 +88,8 @@ class BatteryIconView @JvmOverloads constructor(
     // minSdk 17，用不上 API 23 的 Context.getColor
     @Suppress("DEPRECATION")
     private val ink = context.resources.getColor(R.color.ink)
+    @Suppress("DEPRECATION")
+    private val paper = context.resources.getColor(R.color.paper)
 
     private val framePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ink
@@ -108,9 +111,22 @@ class BatteryIconView @JvmOverloads constructor(
     /** true = 实心方框版，false = 线条四格版 */
     private var block = false
 
+    /** 充电中：电池框正中叠加闪电（电量条上用纸色抠形，空框上用墨色） */
+    private var charging = false
+
+    private val boltPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ink }
+    private val boltPath = Path()
+
     fun setBlockStyle(block: Boolean) {
         if (block == this.block) return
         this.block = block
+        invalidate()
+    }
+
+    /** 充电中叠加闪电；状态没变不重绘（电量广播频繁，墨水屏经不起白刷）。 */
+    fun setCharging(charging: Boolean) {
+        if (charging == this.charging) return
+        this.charging = charging
         invalidate()
     }
 
@@ -184,7 +200,11 @@ class BatteryIconView @JvmOverloads constructor(
         val nubRadius = max(1f, round(NUB_R * unit))
         canvas.drawRoundRect(nubRect, nubRadius, nubRadius, fillPaint)
 
-        if (percent !in 0..100) return
+        if (percent !in 0..100) {
+            if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
+                frameW * 0.55f, frameH * 0.70f, overInk = false)
+            return
+        }
 
         // ---- 第三步：四格电量，矩形坐标全部取整，边界天然是实心黑 ----
         val barW = max(2, round(BAR_W * unit).toInt())
@@ -208,6 +228,8 @@ class BatteryIconView @JvmOverloads constructor(
                 (bx + barW).toFloat(), barBottom.toFloat(), fillPaint
             )
         }
+        if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
+            frameW * 0.55f, frameH * 0.70f, overInk = bars > 0)
     }
 
     // ---------------------------------------------------------------- 实心版
@@ -257,15 +279,47 @@ class BatteryIconView @JvmOverloads constructor(
         val nubRadius = max(1f, round(0.8f * unit))
         canvas.drawRoundRect(nubRect, nubRadius, nubRadius, fillPaint)
 
-        if (percent !in 0..100) return
+        if (percent !in 0..100) {
+            if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
+                frameW * 0.50f, frameH * 0.70f, overInk = false)
+            return
+        }
 
         // 连续填充：宽度 = 电量，贴左边条走，和老版的 layout_weight 同一个算法
         val inner = frameW - border * 2
         val fillW = round(inner * percent / 100f).toInt()
-        if (fillW <= 0) return
+        if (fillW <= 0) {
+            if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
+                frameW * 0.50f, frameH * 0.70f, overInk = false)
+            return
+        }
         canvas.drawRect(
             (left + border).toFloat(), (top + border).toFloat(),
             (left + border + fillW).toFloat(), (top + frameH - border).toFloat(), fillPaint
         )
+        if (charging) drawBolt(canvas, left + frameW / 2f, top + frameH / 2f,
+            frameW * 0.50f, frameH * 0.70f, overInk = true)
+    }
+
+    /**
+     * 充电闪电：画在电池框正中。压在电量条/填充上时用纸色（把闪电从墨色填充里
+     * 「抠」出来，同 Material 充电图标的思路）；框里没填充时用墨色，保证空电也能看见。
+     * 顶点取 Font Awesome bolt 的多边形归一化坐标，按目标框缩放。
+     */
+    private fun drawBolt(canvas: Canvas, cx: Float, cy: Float, w: Float, h: Float, overInk: Boolean) {
+        if (w < 6f || h < 8f) return
+        boltPaint.color = if (overInk) paper else ink
+        val left = cx - w / 2f
+        val top = cy - h / 2f
+        boltPath.reset()
+        boltPath.moveTo(left + w * 0.375f, top)
+        boltPath.lineTo(left, top + h * 0.50f)
+        boltPath.lineTo(left + w * 0.375f, top + h * 0.50f)
+        boltPath.lineTo(left + w * 0.20f, top + h)
+        boltPath.lineTo(left + w, top + h * 0.40f)
+        boltPath.lineTo(left + w * 0.625f, top + h * 0.40f)
+        boltPath.lineTo(left + w * 0.75f, top)
+        boltPath.close()
+        canvas.drawPath(boltPath, boltPaint)
     }
 }

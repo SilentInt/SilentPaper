@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 胶囊时钟背景：黑底、端部全圆角（半径取大值自动收敛成胶囊形） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/ink" />
+    <corners android:radius="999dp" />
+</shape>

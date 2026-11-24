@@ -20,7 +20,7 @@
                         android:layout_marginTop="56dp"
                         android:gravity="center"
                         android:fontFamily="serif"
-                        android:text="8月24日 · 周一"
+                        android:text="8月24日，星期一"
                         android:textColor="@color/gray"
                         android:textSize="14sp" />
 
@@ -152,8 +152,11 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
 
-                        <!-- 内层保持 wrap_content，日期才能居中于「时间的宽度」 -->
+                        <!-- 内层保持 wrap_content，日期才能居中于「时间的宽度」；
+                             homeClockArea 重挂进来后占据原时间位，wrap_content 让
+                             左列继续按「时钟 + 日期」共同宽度水平居中 -->
                         <LinearLayout
+                            android:id="@+id/homeTopSplitLeftInner"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
@@ -176,7 +179,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
                                 android:fontFamily="serif"
-                                android:text="8月24日 · 周一"
+                                android:text="8月24日，星期一"
                                 android:textColor="@color/gray"
                                 android:textSize="14sp" />
                         </LinearLayout>
@@ -291,6 +294,102 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- ===== 时钟区（图标主页与纯文字主页共用）：onCreate 时把 12 种样式变体与信息行
+                     从 homeTextMode 重挂进来，顺序：变体 → WiFi/蓝牙快捷行 → 信息行。
+                     左右内边距由代码按「页边距」写入；图标主页隐藏顶部原生时间、由本区接管。 ===== -->
+                <LinearLayout
+                    android:id="@+id/homeClockArea"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- WiFi/蓝牙快捷行（仅纯文字主页显示）：点击开关、长按进系统设置；
+                         电池项与图标主页状态行同款（图标 + 百分比，充电时 ⚡ + 图标内绘闪电） -->
+                    <LinearLayout
+                        android:id="@+id/homeQuickRow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/textQuickBatteryItem"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <include
+                                android:id="@+id/textQuickBatteryIcon"
+                                layout="@layout/view_battery" />
+
+                            <TextView
+                                android:id="@+id/textQuickBatteryText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="serif"
+                                android:text=""
+                                android:textColor="@color/gray"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/textQuickWifiItem"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="18dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/textQuickWifiIcon"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="@string/quick_wifi"
+                                android:src="@drawable/ic_home_wifi" />
+
+                            <TextView
+                                android:id="@+id/textQuickWifiText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:fontFamily="serif"
+                                android:text=""
+                                android:textColor="@color/gray"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/textQuickBtItem"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="18dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/textQuickBtIcon"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="@string/quick_bluetooth"
+                                android:src="@drawable/ic_home_bt" />
+
+                            <TextView
+                                android:id="@+id/textQuickBtText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:fontFamily="serif"
+                                android:text=""
+                                android:textColor="@color/gray"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
                 <!-- 边距与下方 gridHome 保持一致（24dp），横线两端才与网格左右边界齐平。
                      不要在这里写死 48dp：原值比网格宽 24dp，两端各偏出去一截。
                      marginTop 是经典风格的值，分栏风格在 applyHomeTopStyle() 里换成
@@ -317,4 +416,318 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:clipToPadding="false" />
+
+                <!-- ===== 主页风格 2：纯文字（homeStyle=1，其余顶部块 / 横线 / 网格全部 GONE） =====
+                     左右边距由代码按「页边距」设置写入 paddingLeft/Right；
+                     时间区顶端留白固定，列表吃掉剩余高度，底部标语贴底。 -->
+                <LinearLayout
+                    android:id="@+id/homeTextMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- 大时间 5 种样式：分栏/冒号/胶囊 共用本行（竖线与冒号切换显隐，胶囊加底反色）；
+                         堆叠、数码管为下方独立块，同一时刻只有一个可见。 -->
+                    <LinearLayout
+                        android:id="@+id/homeBigTimeRow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/homeBigTimeHour"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:includeFontPadding="false"
+                            android:text="00"
+                            android:textColor="@color/ink"
+                            android:textSize="72sp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:id="@+id/homeBigTimeSep"
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:background="@color/ink" />
+
+                        <TextView
+                            android:id="@+id/homeBigTimeColon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:includeFontPadding="false"
+                            android:text=":"
+                            android:textColor="@color/ink"
+                            android:textSize="72sp"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/homeBigTimeMin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:includeFontPadding="false"
+                            android:text="00"
+                            android:textColor="@color/ink"
+                            android:textSize="72sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- 堆叠样式：时上分下，块内右对齐 -->
+                    <LinearLayout
+                        android:id="@+id/homeBigTimeStack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:gravity="end"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/homeBigTimeHourStack"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:includeFontPadding="false"
+                            android:text="00"
+                            android:textColor="@color/ink"
+                            android:textSize="72sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/homeBigTimeMinStack"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="sans-serif"
+                            android:includeFontPadding="false"
+                            android:text="00"
+                            android:textColor="@color/ink"
+                            android:textSize="72sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- 数码管样式：七段自绘，不走系统字体 -->
+                    <com.silent.paper.ui.SevenSegmentClockView
+                        android:id="@+id/homeClockSeg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:visibility="gone" />
+
+                    <!-- 翻页样式（inkOS Flip）：4 张墨色圆角卡 + 中线反色带，自绘 -->
+                    <com.silent.paper.ui.FlipClockView
+                        android:id="@+id/homeClockFlip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:visibility="gone" />
+
+                    <!-- 圆环样式（inkOS Round）：日进度弧 + 圆心时间 + 上电量下日期，自绘 -->
+                    <com.silent.paper.ui.RoundClockView
+                        android:id="@+id/homeClockRound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:visibility="gone" />
+
+                    <!-- 竖线样式（inkOS Split）：[时/日期]｜2dp 通高竖线｜[分/电量]。
+                         中线 match_parent 由水平 LinearLayout 按整行最高子块补齐（同分栏顶栏虚线）。 -->
+                    <LinearLayout
+                        android:id="@+id/homeClockVSplit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/homeVSplitHour"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:includeFontPadding="false"
+                                android:text="00"
+                                android:textColor="@color/ink"
+                                android:textSize="72sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/homeVSplitDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="sans-serif"
+                                android:includeFontPadding="false"
+                                android:text=""
+                                android:textColor="@color/ink"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@color/ink" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/homeVSplitMin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:includeFontPadding="false"
+                                android:text="00"
+                                android:textColor="@color/ink"
+                                android:textSize="72sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/homeVSplitBatt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="sans-serif"
+                                android:includeFontPadding="false"
+                                android:text=""
+                                android:textColor="@color/ink"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- 横排样式（inkOS Horizontal）：[HH:MM] 20dp [日期 / 2dp 横线 / 电量] -->
+                    <LinearLayout
+                        android:id="@+id/homeClockHorizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/homeHorizTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:includeFontPadding="false"
+                            android:text="00:00"
+                            android:textColor="@color/ink"
+                            android:textSize="72sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/homeHorizDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:includeFontPadding="false"
+                                android:text=""
+                                android:textColor="@color/ink"
+                                android:textSize="15sp" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginBottom="4dp"
+                                android:background="@color/ink" />
+
+                            <TextView
+                                android:id="@+id/homeHorizBatt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:includeFontPadding="false"
+                                android:text=""
+                                android:textColor="@color/ink"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- 表盘样式（inkOS Analog）：圆环轮廓 + 时/分针 + 圆心点，自绘 -->
+                    <com.silent.paper.ui.AnalogClockView
+                        android:id="@+id/homeClockAnalog"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:visibility="gone" />
+
+                    <!-- 点阵样式（inkOS Matrix）：月历 7×5 + 时钟 17×5 + 电量 7×5，自绘 -->
+                    <com.silent.paper.ui.MatrixClockView
+                        android:id="@+id/homeClockMatrix"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:visibility="gone" />
+
+                    <!-- 信息行：周六, 21 11月 | 100% -->
+                    <TextView
+                        android:id="@+id/homeInfoLine"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:fontFamily="sans-serif"
+                        android:includeFontPadding="false"
+                        android:text=""
+                        android:textColor="@color/gray"
+                        android:textSize="15sp" />
+
+                    <!-- 应用名列表：可滚动，行内 TextView 由代码生成 -->
+                    <ScrollView
+                        android:id="@+id/textListScroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="36dp"
+                        android:clipToPadding="false"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:id="@+id/textList"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+                    </ScrollView>
+
+                    <!-- 底部标语 -->
+                    <TextView
+                        android:id="@+id/homeSlogan"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="serif"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/gray"
+                        android:textSize="13sp" />
+                </LinearLayout>
             </LinearLayout>

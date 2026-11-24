@@ -2,6 +2,8 @@
 <resources>
     <color name="paper">#FAFAF7</color>
     <color name="ink">#1A1A1A</color>
-    <color name="gray">#8A8A8A</color>
+    <!-- 用户要求：全部文字只用黑白，灰字一律改墨色；仅保留给非文字元素（虚线） -->
+    <color name="gray">#1A1A1A</color>
+    <color name="dash">#8A8A8A</color>
     <color name="hairline">#D5D5D0</color>
 </resources>

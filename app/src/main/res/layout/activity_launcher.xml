@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/launcherRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/paper">
@@ -51,7 +52,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
 
-            <TextView
+            <com.silent.paper.ui.ChipTextView
                 android:id="@+id/infoTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +75,7 @@
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp">
 
-                <TextView
+                <com.silent.paper.ui.ChipTextView
                     android:id="@+id/tabHomeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -100,7 +101,7 @@
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp">
 
-                <TextView
+                <com.silent.paper.ui.ChipTextView
                     android:id="@+id/tabAppsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -127,7 +128,7 @@
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp">
 
-                <TextView
+                <com.silent.paper.ui.ChipTextView
                     android:id="@+id/tabSettingsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -163,6 +164,7 @@
             android:id="@+id/manageBar"
             android:layout_width="match_parent"
             android:layout_height="52dp"
+            android:background="@color/paper"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingLeft="20dp"
@@ -270,6 +272,17 @@
                 android:paddingRight="24dp"
                 android:textColor="@color/ink"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/actionBatch"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:textColor="@color/ink"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/actionAppInfo"
@@ -514,70 +527,50 @@
                         android:textColor="@color/ink"
                         android:textSize="15sp" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginRight="24dp"
-                        android:background="@color/hairline" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="serif"
-                        android:gravity="center"
-                        android:text="@string/donation_title"
-                        android:textColor="@color/ink"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:fontFamily="serif"
-                        android:gravity="center"
-                        android:text="@string/donation_text"
-                        android:textColor="@color/gray"
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:id="@+id/donationQr"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="20dp"
-                        android:contentDescription="@string/donation_text"
-                        android:scaleType="fitCenter" />
-
+                    <!-- 原作者赞赏二维码：仅关于页显示（帮助页隐藏）；赞赏弹窗功能已移除 -->
                     <LinearLayout
-                        android:id="@+id/rowDonationPrompt"
+                        android:id="@+id/aboutDonationBlock"
                         android:layout_width="match_parent"
-                        android:layout_height="44dp"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginRight="24dp"
-                        android:layout_marginBottom="20dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:visibility="gone">
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:fontFamily="serif"
-                            android:text="@string/settings_donation_prompt"
-                            android:textColor="@color/ink"
-                            android:textSize="16sp" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="24dp"
+                            android:layout_marginRight="24dp"
+                            android:background="@color/hairline" />
 
                         <TextView
-                            android:id="@+id/settingsDonationPromptValue"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
                             android:fontFamily="serif"
+                            android:gravity="center"
+                            android:text="@string/donation_title"
+                            android:textColor="@color/ink"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="serif"
+                            android:gravity="center"
+                            android:text="@string/donation_text"
                             android:textColor="@color/gray"
-                            android:textSize="16sp" />
+                            android:textSize="14sp" />
+
+                        <ImageView
+                            android:id="@+id/aboutDonationQr"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="20dp"
+                            android:contentDescription="@string/donation_text"
+                            android:scaleType="fitCenter" />
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>
@@ -674,89 +667,6 @@
         </LinearLayout>
     </FrameLayout>
 
-    <!-- Donation prompt overlay (after 50 HOME presses) -->
-    <FrameLayout
-        android:id="@+id/donationOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/paper"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="24dp"
-                android:paddingTop="52dp"
-                android:paddingRight="24dp"
-                android:paddingBottom="16dp"
-                android:fontFamily="serif"
-                android:gravity="center"
-                android:text="@string/donation_prompt_title"
-                android:textColor="@color/ink"
-                android:textSize="20sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/hairline" />
-
-            <ImageView
-                android:id="@+id/donationPromptQr"
-                android:layout_width="240dp"
-                android:layout_height="240dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp"
-                android:contentDescription="@string/donation_text"
-                android:scaleType="fitCenter" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="serif"
-                android:gravity="center"
-                android:text="@string/donation_text"
-                android:textColor="@color/gray"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/donationHint"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="serif"
-                android:gravity="center"
-                android:text="@string/donation_prompt_hint"
-                android:textColor="@color/gray"
-                android:textSize="11sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/hairline" />
-
-            <TextView
-                android:id="@+id/donationClose"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center"
-                android:fontFamily="serif"
-                android:text="@string/donation_close_wait"
-                android:textColor="@color/gray"
-                android:textSize="18sp" />
-        </LinearLayout>
-    </FrameLayout>
-
     <!-- First-use guide overlay -->
     <FrameLayout
         android:id="@+id/guideOverlay"
@@ -809,43 +719,6 @@
                         android:text="@string/guide_body"
                         android:textColor="@color/ink"
                         android:textSize="15sp" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginRight="24dp"
-                        android:background="@color/hairline" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="serif"
-                        android:gravity="center"
-                        android:text="@string/donation_title"
-                        android:textColor="@color/ink"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:fontFamily="serif"
-                        android:gravity="center"
-                        android:text="@string/donation_text"
-                        android:textColor="@color/gray"
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:id="@+id/guideDonationQr"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="20dp"
-                        android:contentDescription="@string/donation_text"
-                        android:scaleType="fitCenter" />
                 </LinearLayout>
             </ScrollView>
 

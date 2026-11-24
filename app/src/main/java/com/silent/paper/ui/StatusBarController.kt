@@ -54,6 +54,16 @@ class StatusBarController(private val activity: Activity) {
     private lateinit var splitBatteryText: TextView
     private lateinit var splitWifiText: TextView
     private lateinit var splitBtText: TextView
+    // 纯文字主页时钟下方的快捷行：电池（同款自绘图标）+ WiFi / 蓝牙
+    private lateinit var textBatteryItem: View
+    private lateinit var textBatteryIcon: BatteryIconView
+    private lateinit var textBatteryText: TextView
+    private lateinit var textWifiItem: View
+    private lateinit var textWifiIcon: ImageView
+    private lateinit var textWifiText: TextView
+    private lateinit var textBtItem: View
+    private lateinit var textBtIcon: ImageView
+    private lateinit var textBtText: TextView
     // 两套顶部的电池图标：view_battery.xml 被 include 两次，include 的 id 会盖掉
     // 根节点 id，所以直接按各自的 id 取，拿到的就是 BatteryIconView
     private lateinit var classicBatteryIcon: BatteryIconView
@@ -85,6 +95,15 @@ class StatusBarController(private val activity: Activity) {
         splitBtIcon = activity.findViewById(R.id.splitBtIcon)
         splitWifiText = activity.findViewById(R.id.splitWifiText)
         splitBtText = activity.findViewById(R.id.splitBtText)
+        textBatteryItem = activity.findViewById(R.id.textQuickBatteryItem)
+        textBatteryIcon = activity.findViewById(R.id.textQuickBatteryIcon)
+        textBatteryText = activity.findViewById(R.id.textQuickBatteryText)
+        textWifiItem = activity.findViewById(R.id.textQuickWifiItem)
+        textWifiIcon = activity.findViewById(R.id.textQuickWifiIcon)
+        textWifiText = activity.findViewById(R.id.textQuickWifiText)
+        textBtItem = activity.findViewById(R.id.textQuickBtItem)
+        textBtIcon = activity.findViewById(R.id.textQuickBtIcon)
+        textBtText = activity.findViewById(R.id.textQuickBtText)
 
         // 电量百分比用墨色，和 WiFi / 蓝牙那几项同一层信息。原来固定浅灰，
         // 是把它当成了"次要读数"，可旁边那两项只有关闭时才是灰的 —— 结果一个常亮的
@@ -94,6 +113,7 @@ class StatusBarController(private val activity: Activity) {
         val ink = activity.resources.getColor(R.color.ink)
         battery.setTextColor(ink)
         splitBatteryText.setTextColor(ink)
+        textBatteryText.setTextColor(ink)
     }
 
     /**
@@ -111,34 +131,40 @@ class StatusBarController(private val activity: Activity) {
         val solid = style == 1
         classicBatteryIcon.setBlockStyle(solid)
         splitBatteryIcon.setBlockStyle(solid)
+        textBatteryIcon.setBlockStyle(solid)
         val wifiRes = if (solid) R.drawable.ic_home_wifi_solid else R.drawable.ic_home_wifi
         val btRes = if (solid) R.drawable.ic_home_bt_solid else R.drawable.ic_home_bt
         wifiIcon.setImageResource(wifiRes)
         btIcon.setImageResource(btRes)
+        textWifiIcon.setImageResource(wifiRes)
+        textBtIcon.setImageResource(btRes)
         splitWifiIcon.setImageResource(wifiRes)
         splitBtIcon.setImageResource(btRes)
         update()
     }
 
     fun setup() {
-        wifiItem.setOnClickListener { toggleWifi() }
-        wifiItem.setOnLongClickListener {
-            runCatching { activity.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS)) }
-            true
-        }
+        // WiFi 图标点击跳系统 WiFi 设置（按用户要求改为设置直达，不再原地开关）
+        wifiItem.setOnClickListener { openWifiSettings() }
+        wifiItem.setOnLongClickListener { openWifiSettings(); true }
         btItem.setOnClickListener { toggleBluetooth() }
         btItem.setOnLongClickListener {
             runCatching { activity.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)) }
             true
         }
-        // 分栏风格：整行（图标 + 状态文字）都可点，触控目标比 20dp 的图标大不少
-        splitWifiItem.setOnClickListener { toggleWifi(splitWifiItem) }
-        splitWifiItem.setOnLongClickListener {
-            runCatching { activity.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS)) }
-            true
-        }
+        // 分栏风格：WiFi 同样直达设置；蓝牙仍是整行可点开关
+        splitWifiItem.setOnClickListener { openWifiSettings() }
+        splitWifiItem.setOnLongClickListener { openWifiSettings(); true }
         splitBtItem.setOnClickListener { toggleBluetooth(splitBtItem) }
         splitBtItem.setOnLongClickListener {
+            runCatching { activity.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)) }
+            true
+        }
+        // 纯文字主页快捷行：WiFi 直达设置，蓝牙同一套开关/长按逻辑
+        textWifiItem.setOnClickListener { openWifiSettings() }
+        textWifiItem.setOnLongClickListener { openWifiSettings(); true }
+        textBtItem.setOnClickListener { toggleBluetooth(textBtItem) }
+        textBtItem.setOnLongClickListener {
             runCatching { activity.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)) }
             true
         }
@@ -178,10 +204,13 @@ class StatusBarController(private val activity: Activity) {
         val gray = activity.resources.getColor(R.color.gray)
 
         val level = batteryLevel()
+        val charging = batteryCharging()
+        // 电量文本不带 ⚡ 前缀（按用户要求移除）；充电指示保留在电池图标内的闪电
         val pctText = if (level >= 0) "$level%" else ""
         battery.setIfChanged(pctText)
         splitBatteryText.setIfChanged(pctText)
-        applyBattery(level)
+        textBatteryText.setIfChanged(pctText)
+        applyBattery(level, charging)
 
         val cm = activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val wifiConnected = runCatching {
@@ -202,6 +231,8 @@ class StatusBarController(private val activity: Activity) {
         })
         wifiText.setTextColor(if (wifiEnabled) ink else gray)
         wifiIcon.setColorFilter(if (wifiEnabled) ink else gray)
+        textWifiIcon.setColorFilter(if (wifiEnabled) ink else gray)
+        textWifiText.setIfChanged(wifiText.text)
         splitWifiText.setIfChanged(
             fitCjk(activity.getString(if (wifiEnabled) R.string.wifi_on else R.string.wifi_off))
         )
@@ -224,27 +255,47 @@ class StatusBarController(private val activity: Activity) {
         btText.setIfChanged(activity.getString(if (btOn) R.string.bt_on else R.string.bt_off))
         btText.setTextColor(if (btOn) ink else gray)
         btIcon.setColorFilter(if (btOn) ink else gray)
+        textBtIcon.setColorFilter(if (btOn) ink else gray)
+        textBtText.setIfChanged(btText.text)
         splitWifiIcon.setColorFilter(if (wifiEnabled) ink else gray)
         splitBtIcon.setColorFilter(if (btOn) ink else gray)
         splitBtText.setIfChanged(fitCjk(activity.getString(if (btOn) R.string.bt_on else R.string.bt_off)))
         splitBtText.setTextColor(if (btOn) ink else gray)
     }
 
-    // 两套顶部的电池图标：四格电量按百分比换算，写法与控制中心一致
-    private fun applyBattery(level: Int) {
+    // 三套电池图标（经典 / 分栏 / 纯文字快捷行）：百分比 + 充电闪电同步写入
+    private fun applyBattery(level: Int, charging: Boolean) {
         val pct = if (level in 0..100) level else -1
         classicBatteryIcon.setPercent(pct)
+        classicBatteryIcon.setCharging(charging)
         splitBatteryIcon.setPercent(pct)
+        splitBatteryIcon.setCharging(charging)
+        textBatteryIcon.setPercent(pct)
+        textBatteryIcon.setCharging(charging)
     }
 
-    @Suppress("DEPRECATION")
-    private fun toggleWifi(delayOn: View = wifiItem) {
-        runCatching {
-            val wifi = activity.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-            wifi.setWifiEnabled(!wifi.isWifiEnabled)
+    /** 时钟周边字号（用户手动值）：统一写入三套状态文本；DIP 单位不受全局 fontScale 影响。 */
+    fun applyContextTextSize(sp: Int) {
+        if (sp <= 0) return
+        val unit = android.util.TypedValue.COMPLEX_UNIT_DIP
+        battery.setTextSize(unit, sp.toFloat())
+        network.setTextSize(unit, sp.toFloat())
+        wifiText.setTextSize(unit, sp.toFloat())
+        btText.setTextSize(unit, sp.toFloat())
+        splitBatteryText.setTextSize(unit, sp.toFloat())
+        splitWifiText.setTextSize(unit, sp.toFloat())
+        splitBtText.setTextSize(unit, sp.toFloat())
+        textWifiText.setTextSize(unit, sp.toFloat())
+        textBtText.setTextSize(unit, sp.toFloat())
+        textBatteryText.setTextSize(unit, sp.toFloat())
+    }
+
+    /** 跳系统 WiFi 设置；极个别 ROM 无组件时 Toast 提示。 */
+    private fun openWifiSettings() {
+        val ok = runCatching { activity.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS)) }.isSuccess
+        if (!ok) {
+            android.widget.Toast.makeText(activity, R.string.wifi_settings_failed, android.widget.Toast.LENGTH_SHORT).show()
         }
-        // 开关是异步的，广播可能比状态切换早到，延迟再拉一次
-        delayOn.postDelayed({ update() }, 600)
     }
 
     @SuppressLint("MissingPermission")
@@ -301,5 +352,22 @@ class StatusBarController(private val activity: Activity) {
             val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
             if (level >= 0 && scale > 0) level * 100 / scale else -1
         }.getOrDefault(-1)
+    }
+
+    /** 最近一次成功读到的充电状态；sticky 广播偶发取不到时沿用。 */
+    private var lastCharging = false
+
+    /** 是否在充电（含「插着电源且已充满」）；读 sticky 广播，取不到时回退上次值。 */
+    private fun batteryCharging(): Boolean {
+        val fresh = runCatching {
+            val intent = activity.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+                ?: return@runCatching null
+            val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
+            val plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0)
+            status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                    (status == BatteryManager.BATTERY_STATUS_FULL && plugged != 0)
+        }.getOrNull()
+        if (fresh != null) lastCharging = fresh
+        return lastCharging
     }
 }

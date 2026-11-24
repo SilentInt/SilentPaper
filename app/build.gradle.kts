@@ -8,11 +8,11 @@ android {
     enableKotlin = true
 
     defaultConfig {
-        applicationId = "com.silent.paper"
+        applicationId = "com.momocat.silentpaper"
         minSdk = 17
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 10
+        versionName = "1.9"
     }
 
     signingConfigs {

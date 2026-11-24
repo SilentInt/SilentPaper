@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 线框时钟背景（inkOS Box Outline）：2dp 墨色描边圆角盒，无填充，文字墨色 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <stroke
+        android:width="2dp"
+        android:color="@color/ink" />
+    <corners android:radius="8dp" />
+</shape>

@@ -11,13 +11,34 @@
         android:gravity="center"
         android:padding="4dp">
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:contentDescription="icon" />
+        <!-- 图标外框：标记（隐藏 ○ / 管理 ●○隐）贴在图标右上角，随图标走；
+             负边距向外探出，故关闭裁剪 -->
+        <FrameLayout
+            android:id="@+id/iconFrame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipChildren="false">
 
-        <TextView
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:contentDescription="icon" />
+
+            <com.silent.paper.ui.ChipTextView
+                android:id="@+id/marker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="-3dp"
+                android:layout_marginEnd="-3dp"
+                android:text="○"
+                android:textColor="@color/ink"
+                android:textSize="14sp"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <com.silent.paper.ui.ChipTextView
             android:id="@+id/label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,16 +49,4 @@
             android:textSize="12sp"
             android:layout_marginTop="4dp" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/marker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="8dp"
-        android:text="○"
-        android:textColor="@color/ink"
-        android:textSize="14sp"
-        android:visibility="gone" />
 </FrameLayout>
