@@ -505,16 +505,36 @@ class LauncherActivity : Activity() {
 
     private fun ensureDonationQr() {
         if (donationQrReady) return
+        donationQrReady = true
+        // API 17/18 上 ZXing 会因缺 StandardCharsets 抛 NoClassDefFoundError；
+        // 后台线程的未捕获异常会直接杀进程。赞赏二维码不是启动必需项，隐藏即可。
+        if (!QrCodes.isSupported()) {
+            hideDonationQr()
+            return
+        }
         Thread {
-            val qr = QrCodes.generate(DONATION_WECHAT_URI, dp(240))
+            val qr = runCatching { QrCodes.generate(DONATION_WECHAT_URI, dp(240)) }.getOrNull()
             runOnUiThread {
                 if (isFinishing) return@runOnUiThread
-                donationQr.setImageBitmap(qr)
-                guideDonationQr.setImageBitmap(qr)
-                donationPromptQr.setImageBitmap(qr)
-                donationQrReady = true
+                if (qr == null) {
+                    hideDonationQr()
+                } else {
+                    donationQr.setImageBitmap(qr)
+                    guideDonationQr.setImageBitmap(qr)
+                    donationPromptQr.setImageBitmap(qr)
+                    donationQr.visibility = View.VISIBLE
+                    guideDonationQr.visibility = View.VISIBLE
+                    donationPromptQr.visibility = View.VISIBLE
+                }
             }
         }.start()
+    }
+
+    /** 旧系统或二维码生成失败时不显示图片，保留赞赏文案与提醒开关。 */
+    private fun hideDonationQr() {
+        donationQr.visibility = View.GONE
+        guideDonationQr.visibility = View.GONE
+        donationPromptQr.visibility = View.GONE
     }
 
     private fun setupFeatureControllers() {
@@ -1463,9 +1483,20 @@ class LauncherActivity : Activity() {
 
         val url = "http://$ip:$WIFI_TRANSFER_PORT"
         wifiUrlText.text = url
-        wifiHintText.text = getString(R.string.wifi_transfer_url_hint, url) + "\n" +
-                getString(R.string.wifi_transfer_folder_hint)
-        wifiQr.setImageBitmap(QrCodes.generate(url, dp(300)))
+        val qr = if (QrCodes.isSupported()) {
+            runCatching { QrCodes.generate(url, dp(300)) }.getOrNull()
+        } else null
+        if (qr != null) {
+            wifiQr.setImageBitmap(qr)
+            wifiQr.visibility = View.VISIBLE
+            wifiHintText.text = getString(R.string.wifi_transfer_url_hint, url) + "\n" +
+                    getString(R.string.wifi_transfer_folder_hint)
+        } else {
+            wifiQr.visibility = View.GONE
+            wifiHintText.text = getString(R.string.wifi_transfer_url_hint, url) + "\n" +
+                    getString(R.string.wifi_transfer_qr_unavailable) + "\n" +
+                    getString(R.string.wifi_transfer_folder_hint)
+        }
         wifiOverlay.visibility = View.VISIBLE
     }
 
